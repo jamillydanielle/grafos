@@ -1,5 +1,5 @@
-## Universidade Federal de Lavras
+# Universidade Federal de Lavras
 #Ciência da Computação
 
-# Algoritmo em Grafos
+## Algoritmo em Grafos
 Atividade de Implementação
