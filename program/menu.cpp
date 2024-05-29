@@ -146,6 +146,16 @@ bool acessoSubPaginas(int value){
     }
 }
 
+void navegacaoSubPaginas(int value){ // Finalizar
+    if(value == 1) {
+        menuVerificacao();
+    } else if(value == 2) {
+        menuListagem();
+    } else if(value == 3) {
+        menuConfiguracoes();
+    }
+}
+
 int main(){
 
     int value;
