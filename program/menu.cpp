@@ -31,9 +31,29 @@ int qntOpcoes(Menu menu){
     return XOpcoes;
 }
 
-void navegacao(){
-    cout<< "Digite (v) para voltar"<< endl;
+string retornoInsiraValor(){
+    return "> Insira o valor: "; 
+}
 
+string retornoPaginaInicial(){
+    return "* Digite (0) para voltar para a pagina inicial"; 
+}
+
+string retornoValorInvalido(){
+    return "> Valor invalido, tente novamente."; 
+}
+
+bool validacaoOpcaoSelecionada(Menu menu, int value){
+    bool valid = false;
+
+    if(value>qntOpcoes(menu) or value<1){
+        retornoValorInvalido();
+    }
+    else{
+        valid = true;
+    }
+
+    return valid;
 }
 
 void menuPrincipal(){
@@ -44,7 +64,7 @@ void menuPrincipal(){
     cout<< "--------------------------------" << endl;
     cout<< "1    |   Verificacao" << endl;
     cout<< "2    |   Listagem" << endl;
-    cout<< "3    |   Configuracoes" << endl;
+    cout<< "3    |   Gerar configuracoes" << endl;
     cout<< "--------------------------------" << endl << endl;
 }
 
@@ -63,7 +83,7 @@ void menuVerificacao(){
     cout<< "7    |   Ciclico" << endl;
     cout<< "8    |   Planar" << endl;
     cout<< "--------------------------------" << endl << endl;
-    navegacao();
+    retornoPaginaInicial();
 }
 
 void menuListagem(){
@@ -81,7 +101,7 @@ void menuListagem(){
     cout<< "7    |   Vertices de articulacao" << endl;
     cout<< "8    |   Arestas ponte" << endl;
     cout<< "--------------------------------" << endl << endl;
-    navegacao();
+    retornoPaginaInicial();
 }
 
 void menuConfiguracoes(){
@@ -101,12 +121,53 @@ void menuConfiguracoes(){
     cout<< "9    |   Fluxo maximo" << endl; // Função não disponível em grafos não ponderados
     cout<< "10   |   Fechamento transitivo" << endl; // Função não disponível em grafos não ponderados
     cout<< "--------------------------------" << endl << endl;
-    navegacao();
+    retornoPaginaInicial();
+}
+
+void navegacaoPaginaInicial(int value){
+
+    if(value == 1) {
+        menuVerificacao();
+    } else if(value == 2) {
+        menuListagem();
+    } else if(value == 3) {
+        menuConfiguracoes();
+    }
+}
+
+bool acessoSubPaginas(int value){
+    if(validacaoOpcaoSelecionada(MENU_PRINCIPAL, value)==true){
+        navegacaoPaginaInicial(value);
+        cout << retornoPaginaInicial() << endl << endl;
+        return true;
+    }else{
+        cout << retornoValorInvalido() << endl << endl;
+        return false;
+    }
 }
 
 int main(){
+
+    int value;
     
     menuPrincipal();
+    
+    cout << retornoInsiraValor();
+    cin >> value;
+
+    if (acessoSubPaginas(value)==true){
+        
+        cout << retornoInsiraValor();
+        cin >> value;
+
+        if(value == 0){
+            main();
+        }
+    }
+
+    else{
+        main();
+    }
 
     return 0;
 }
