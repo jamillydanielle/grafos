@@ -57,6 +57,7 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
+<<<<<<< HEAD
     "iostream": "cpp",
     "ostream": "cpp",
     "system_error": "cpp",
@@ -65,5 +66,9 @@
     "tuple": "cpp",
     "type_traits": "cpp",
     "utility": "cpp"
+=======
+    "ostream": "cpp",
+    "iostream": "cpp"
+>>>>>>> main
   }
 }
