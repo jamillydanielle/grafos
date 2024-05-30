@@ -1,7 +1,28 @@
 #include <iostream>
-
 using namespace std;
 
+// Informações
+string infoInsiraValor(){
+    return "> Insira o valor: "; 
+}
+
+string infoPaginaInicial(){
+    return "* Digite (0) para voltar para a pagina inicial"; 
+}
+
+string infoEncerrarPrograma(){
+    return "* Digite (000) para encerrar o programa"; 
+}
+
+string encerrarPrograma(){
+    return "* Programa encerrado com sucesso!"; 
+}
+
+string infoValorInvalido(){
+    return "> Valor invalido, tente novamente."; 
+}
+
+// Menu
 enum Menu {
     MENU_PRINCIPAL,
     MENU_VERIFICACAO,
@@ -31,23 +52,11 @@ int qntOpcoes(Menu menu){
     return XOpcoes;
 }
 
-string retornoInsiraValor(){
-    return "> Insira o valor: "; 
-}
-
-string retornoPaginaInicial(){
-    return "* Digite (0) para voltar para a pagina inicial"; 
-}
-
-string retornoValorInvalido(){
-    return "> Valor invalido, tente novamente."; 
-}
-
 bool validacaoOpcaoSelecionada(Menu menu, int value){
     bool valid = false;
 
     if(value>qntOpcoes(menu) or value<1){
-        retornoValorInvalido();
+        infoValorInvalido();
     }
     else{
         valid = true;
@@ -66,6 +75,7 @@ void menuPrincipal(){
     cout<< "2    |   Listagem" << endl;
     cout<< "3    |   Gerar configuracoes" << endl;
     cout<< "--------------------------------" << endl << endl;
+    cout << infoEncerrarPrograma() << endl << endl;;
 }
 
 void menuVerificacao(){
@@ -83,7 +93,6 @@ void menuVerificacao(){
     cout<< "7    |   Ciclico" << endl;
     cout<< "8    |   Planar" << endl;
     cout<< "--------------------------------" << endl << endl;
-    retornoPaginaInicial();
 }
 
 void menuListagem(){
@@ -101,7 +110,6 @@ void menuListagem(){
     cout<< "7    |   Vertices de articulacao" << endl;
     cout<< "8    |   Arestas ponte" << endl;
     cout<< "--------------------------------" << endl << endl;
-    retornoPaginaInicial();
 }
 
 void menuConfiguracoes(){
@@ -121,11 +129,9 @@ void menuConfiguracoes(){
     cout<< "9    |   Fluxo maximo" << endl; // Função não disponível em grafos não ponderados
     cout<< "10   |   Fechamento transitivo" << endl; // Função não disponível em grafos não ponderados
     cout<< "--------------------------------" << endl << endl;
-    retornoPaginaInicial();
 }
 
 void navegacaoPaginaInicial(int value){
-
     if(value == 1) {
         menuVerificacao();
     } else if(value == 2) {
@@ -138,10 +144,10 @@ void navegacaoPaginaInicial(int value){
 bool acessoSubPaginas(int value){
     if(validacaoOpcaoSelecionada(MENU_PRINCIPAL, value)==true){
         navegacaoPaginaInicial(value);
-        cout << retornoPaginaInicial() << endl << endl;
+        cout<< infoPaginaInicial() << endl << endl;
         return true;
     }else{
-        cout << retornoValorInvalido() << endl << endl;
+        cout<< infoValorInvalido() << endl << endl;
         return false;
     }
 }
@@ -156,28 +162,45 @@ void navegacaoSubPaginas(int value){ // Finalizar
     }
 }
 
-int main(){
+// Execução
+enum TipoGrafo {
+    DIRECIONADO,
+    NAO_DIRECIONADO
+};
 
+void execucao(){
     int value;
-    
-    menuPrincipal();
-    
-    cout << retornoInsiraValor();
-    cin >> value;
 
-    if (acessoSubPaginas(value)==true){
+    bool encerrar = false;
+
+    while (!encerrar) {
+        menuPrincipal();
         
-        cout << retornoInsiraValor();
+        cout << infoInsiraValor();
         cin >> value;
 
-        if(value == 0){
-            main();
+        if (value == 0) break;
+
+        if (acessoSubPaginas(value)) {
+            cout << infoInsiraValor();
+            cin >> value;
+
+            if (value == 0) continue;
+            if (value == 000){
+                encerrar = true;
+            }
+        } else {
+            cout << infoValorInvalido() << endl;
         }
     }
 
-    else{
-        main();
-    }
+    cout << encerrarPrograma() << endl << endl;
+
+}
+
+int main() {
+    
+    execucao();
 
     return 0;
 }
