@@ -7,11 +7,11 @@ string infoInsiraValor(){
 }
 
 string infoPaginaInicial(){
-    return "* Digite (0) para voltar para a pagina inicial"; 
+    return "* Digite (0) para > voltar < para a pagina inicial"; 
 }
 
 string infoEncerrarPrograma(){
-    return "* Digite (000) para encerrar o programa"; 
+    return "* Digite (0) para > encerrar < o programa"; 
 }
 
 string encerrarPrograma(){
@@ -27,7 +27,8 @@ enum Menu {
     MENU_PRINCIPAL,
     MENU_VERIFICACAO,
     MENU_LISTAGEM,
-    MENU_CONFIGURACOES
+    MENU_CONFIGURACOES,
+    MENU_TIPOGRAFO
 };
 
 int qntOpcoes(Menu menu){  
@@ -46,10 +47,23 @@ int qntOpcoes(Menu menu){
         case MENU_CONFIGURACOES:
             XOpcoes = 10;
             break;
+        case MENU_TIPOGRAFO:
+            XOpcoes = 2;
+            break;
         default:
             break;
     }
     return XOpcoes;
+}
+
+void menuTipoGrafo(){
+    cout<< "" << endl << "[ Tipo do grafo ]" << endl << endl;
+    cout<< "* Selecione o Num. da opcao ref. a configuracao do grafo:" << endl << endl;
+    cout<< "--------------------------------" << endl;
+    cout<< "Num. |   Tipo" << endl;
+    cout<< "--------------------------------" << endl;
+    cout<< "1    |   Direcionado" << endl;
+    cout<< "2    |   Nao direcionado" << endl << endl;
 }
 
 void menuPrincipal(){
@@ -151,31 +165,43 @@ bool acessoSubPaginas(int value){
 }
 
 // Configuração
-enum TipoGrafo {
-    DIRECIONADO,
-    NAO_DIRECIONADO
-};
+bool grafoDirecionado(int value){
+    if(value == 1){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 
 struct Aresta{
     char origem;
     char destino;
 };
 
-void tipoGrafo(int value){
-
-}
-
 // Execução
 void leituraArquivo (){ // TODO: Finalizar
 }
 
-void analiseGrafo(){
+void analiseGrafo(int value){
 }
 
 void execucao(){
-    int value;
+    int value = 0;
 
     bool encerrar = false;
+
+    while(!(validacaoOpcaoSelecionada(MENU_TIPOGRAFO, value))){
+        menuTipoGrafo();
+        cout << infoEncerrarPrograma() << endl << endl << infoInsiraValor();
+        cin >> value;
+
+        if (value == 0){
+            encerrar = true;
+            break;
+        }
+        else cout << infoValorInvalido() << endl << endl;
+    }
 
     while (!encerrar) {
         menuPrincipal();
@@ -190,7 +216,7 @@ void execucao(){
 
             if (value == 0) continue;
         }
-        else if (value == 000){
+        else if (value == 0){
             encerrar = true;
         }
         else{
