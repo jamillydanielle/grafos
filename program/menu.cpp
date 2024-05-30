@@ -174,33 +174,27 @@ bool grafoDirecionado(int value){
     }
 }
 
-struct Aresta{
-    char origem;
-    char destino;
-};
-
 // Execução
-void leituraArquivo (){ // TODO: Finalizar
-}
-
-void analiseGrafo(int value){
-}
 
 void execucao(){
-    int value = 0;
+    int value;
 
     bool encerrar = false;
 
-    while(!(validacaoOpcaoSelecionada(MENU_TIPOGRAFO, value))){
-        menuTipoGrafo();
-        cout << infoEncerrarPrograma() << endl << endl << infoInsiraValor();
-        cin >> value;
+    while(!encerrar){
 
-        if (value == 0){
-            encerrar = true;
-            break;
+        if (validacaoOpcaoSelecionada(MENU_TIPOGRAFO, value)){
+            menuTipoGrafo();
+            cout << infoEncerrarPrograma() << endl << endl << infoInsiraValor();
+            cin >> value;
+
+            if (value == 0){
+                encerrar = true;
+                break;
+            }
+
+            else cout << infoValorInvalido() << endl << endl;
         }
-        else cout << infoValorInvalido() << endl << endl;
     }
 
     while (!encerrar) {
