@@ -15,14 +15,14 @@ string infoEncerrarPrograma(){
 }
 
 string encerrarPrograma(){
-    return "* Programa encerrado com sucesso!"; 
+    return "* Programa encerrado!"; 
 }
 
 string infoValorInvalido(){
     return "> Valor invalido, tente novamente."; 
 }
 
-// Menu
+// Menus
 enum Menu {
     MENU_PRINCIPAL,
     MENU_VERIFICACAO,
@@ -52,19 +52,6 @@ int qntOpcoes(Menu menu){
     return XOpcoes;
 }
 
-bool validacaoOpcaoSelecionada(Menu menu, int value){
-    bool valid = false;
-
-    if(value>qntOpcoes(menu) or value<1){
-        infoValorInvalido();
-    }
-    else{
-        valid = true;
-    }
-
-    return valid;
-}
-
 void menuPrincipal(){
     cout<< "" << endl << "[ Menu principal ]" << endl << endl;
     cout<< "* Selecione o Num. da opcao desejada:" << endl << endl;
@@ -75,7 +62,6 @@ void menuPrincipal(){
     cout<< "2    |   Listagem" << endl;
     cout<< "3    |   Gerar configuracoes" << endl;
     cout<< "--------------------------------" << endl << endl;
-    cout << infoEncerrarPrograma() << endl << endl;;
 }
 
 void menuVerificacao(){
@@ -124,11 +110,22 @@ void menuConfiguracoes(){
     cout<< "4    |   Arvore de largura" << endl;
     cout<< "5    |   Arvore geradora minima" << endl;
     cout<< "6    |   Ordem topologia" << endl;
-    cout<< "7    |   Vertices de articulacao" << endl; // Função não disponível em grafos não direcionado
-    cout<< "8    |   Caminho minimo entre dois vertices" << endl; // Função não disponível em grafos não ponderados
-    cout<< "9    |   Fluxo maximo" << endl; // Função não disponível em grafos não ponderados
-    cout<< "10   |   Fechamento transitivo" << endl; // Função não disponível em grafos não ponderados
+    cout<< "7    |   Vertices de articulacao" << endl; // NOTE: Função não disponível em grafos não direcionado
+    cout<< "8    |   Caminho minimo entre dois vertices" << endl; // NOTE: Função não disponível em grafos não ponderados
+    cout<< "9    |   Fluxo maximo" << endl; // NOTE: Função não disponível em grafos não ponderados
+    cout<< "10   |   Fechamento transitivo" << endl; // NOTE: Função não disponível em grafos não ponderados
     cout<< "--------------------------------" << endl << endl;
+}
+
+// Navegação
+bool validacaoOpcaoSelecionada(Menu menu, int value){
+    bool valid = false;
+
+    if(value>=1 and value<=qntOpcoes(menu)){
+        valid = true;
+    }
+
+    return valid;
 }
 
 void navegacaoPaginaInicial(int value){
@@ -141,32 +138,39 @@ void navegacaoPaginaInicial(int value){
     }
 }
 
+void navegacaoSubPaginas(){ // TODO: Finalizar
+}
+
 bool acessoSubPaginas(int value){
     if(validacaoOpcaoSelecionada(MENU_PRINCIPAL, value)==true){
         navegacaoPaginaInicial(value);
-        cout<< infoPaginaInicial() << endl << endl;
         return true;
     }else{
-        cout<< infoValorInvalido() << endl << endl;
         return false;
     }
 }
 
-void navegacaoSubPaginas(int value){ // Finalizar
-    if(value == 1) {
-        menuVerificacao();
-    } else if(value == 2) {
-        menuListagem();
-    } else if(value == 3) {
-        menuConfiguracoes();
-    }
-}
-
-// Execução
+// Configuração
 enum TipoGrafo {
     DIRECIONADO,
     NAO_DIRECIONADO
 };
+
+struct Aresta{
+    char origem;
+    char destino;
+};
+
+void tipoGrafo(int value){
+
+}
+
+// Execução
+void leituraArquivo (){ // TODO: Finalizar
+}
+
+void analiseGrafo(){
+}
 
 void execucao(){
     int value;
@@ -175,22 +179,23 @@ void execucao(){
 
     while (!encerrar) {
         menuPrincipal();
+        cout << infoEncerrarPrograma() << endl << endl;
         
         cout << infoInsiraValor();
         cin >> value;
 
-        if (value == 0) break;
-
         if (acessoSubPaginas(value)) {
-            cout << infoInsiraValor();
+            cout << infoPaginaInicial() << endl << endl << infoInsiraValor();
             cin >> value;
 
             if (value == 0) continue;
-            if (value == 000){
-                encerrar = true;
-            }
-        } else {
-            cout << infoValorInvalido() << endl;
+        }
+        else if (value == 000){
+            encerrar = true;
+        }
+        else{
+            cout << infoValorInvalido() << endl << endl;
+            continue;
         }
     }
 
