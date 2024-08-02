@@ -93,7 +93,7 @@ void menuListagem(){
     cout<< "7    |   Um caminho Euleriano" << endl; // Priorizando a ordem lexicográfica dos vértices
     cout<< "8    |   Um caminho Hamiltoniano" << endl; // (priorizando a ordem lexicográfica dos vértices
     cout<< "9    |   Vertices de articulacao" << endl;
-    cout<< "10    |   Arestas ponte" << endl;
+    cout<< "10   |   Arestas ponte" << endl;
     cout<< "--------------------------------" << endl << endl;
     retornoPaginaInicial();
 }
@@ -110,7 +110,7 @@ void menuConfiguracoes(){
     cout<< "14    |   Ordem topologia" << endl;
     cout<< "15    |   Caminho minimo entre dois vertices" << endl;
     cout<< "16    |   Fluxo maximo" << endl;
-    cout<< "17   |   Fechamento transitivo" << endl;
+    cout<< "17    |   Fechamento transitivo" << endl;
     cout<< "--------------------------------" << endl << endl;
     retornoPaginaInicial();
 }
