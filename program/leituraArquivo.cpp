@@ -5,15 +5,17 @@
 
 using namespace std;
 
-// Informações
 string infoVerticesIncorretos(){
-    return "> > Formato incorreto: vértices não definidos corretamente."; 
+    return "> > Formato incorreto: vertices nao definidos corretamente."; 
 }
 
 string infoArestasIncorretos(){
-    return "> Formato incorreto: arestas não definidas corretamente."; 
+    return "> Formato incorreto: arestas nao definidas corretamente."; 
 }
 
+string infoErroArquivo(){
+    return "> Erro: nao foi possivel abrir o arquivo corretamente"; 
+}
 
 struct Aresta {
     string origem;
@@ -21,30 +23,7 @@ struct Aresta {
     int peso;
 };
 
-void analisarGrafo(const string linha, set<string> vertices, vector<Aresta> arestas) {
-    regex padraoVertices(R"(V\s*=\s*\{([^}]+)\};)");
-    regex padraoArestas(R"(A\s*=\s*\{([^}]+)\};)");
-    regex formatoAresta(R"(\(([^,]+),([^,]+),(-?\d+)\))");
-
-    smatch correspondencia;
-
-    // Extrair vértices
-    size_t inicio = linha.find("{");
-    size_t fim = linha.find("}");
-
-    if (inicio != string::npos && fim != string::npos) {
-        string stringVertices = linha.substr(inicio + 1, fim - inicio - 1);
-        istringstream streamVertices(stringVertices);
-        string vertice;
-        
-        while (getline(streamVertices, vertice, ',')) {
-            vertices.insert(vertice);
-        }
-    } else {
-        cout << infoVerticesIncorretos() << endl << endl;
-    }
-
-    // Extrair arestas
+void analiseVertice(const string linha, set<string> vertices) {
 }
 
 int main(){
@@ -55,12 +34,13 @@ int main(){
     arquivo.open("grafo.txt");
 
     if (!arquivo.is_open()) {
-        cout << "> Nao foi possivel abrir o arquivo!" << endl;
+        cout << infoErroArquivo() << endl;
     }
 
-    while (getline(arquivo, linha)) {
-        char value;
-
+    else{
+        while (getline(arquivo, linha)) {
+            cout << linha;
+        }
     }
 
     arquivo.close();
