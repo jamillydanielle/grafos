@@ -74,14 +74,10 @@ void menuVerificacao(){
     cout<< "--------------------------------" << endl;
     cout<< "Num. |   Tipo de verificacao" << endl;
     cout<< "--------------------------------" << endl;
-    cout<< "1    |   Quantidade de vertices" << endl;
-    cout<< "2    |   Quantidade de arestas" << endl;
-    cout<< "3    |   Conexo" << endl;
-    cout<< "4    |   Bipartido" << endl;
-    cout<< "5    |   Euleriano" << endl;
-    cout<< "6    |   Hamiltoniano" << endl;
-    cout<< "7    |   Ciclico" << endl;
-    cout<< "8    |   Planar" << endl;
+    cout<< "1    |   Conexo" << endl;
+    cout<< "2    |   Bipartido" << endl;
+    cout<< "3    |   Euleriano" << endl;
+    cout<< "4    |   Possui ciclo" << endl;
     cout<< "--------------------------------" << endl << endl;
     retornoPaginaInicial();
 }
@@ -92,14 +88,12 @@ void menuListagem(){
     cout<< "--------------------------------" << endl;
     cout<< "Num. |   Tipo de listagem" << endl;
     cout<< "--------------------------------" << endl;
-    cout<< "1    |   Vertices" << endl;
-    cout<< "2    |   Arestas" << endl;
-    cout<< "3    |   Componentes conexas" << endl;
-    cout<< "4    |   Um caminho Euleriano" << endl;
-    cout<< "5    |   Um caminho Hamiltoniano" << endl;
-    cout<< "6    |   Hamiltoniano" << endl;
-    cout<< "7    |   Vertices de articulacao" << endl;
-    cout<< "8    |   Arestas ponte" << endl;
+    cout<< "5    |   Componentes conexas" << endl;
+    cout<< "6    |   Componentes fortemente conexas" << endl; 
+    cout<< "7    |   Um caminho Euleriano" << endl; // Priorizando a ordem lexicográfica dos vértices
+    cout<< "8    |   Um caminho Hamiltoniano" << endl; // (priorizando a ordem lexicográfica dos vértices
+    cout<< "9    |   Vertices de articulacao" << endl;
+    cout<< "10    |   Arestas ponte" << endl;
     cout<< "--------------------------------" << endl << endl;
     retornoPaginaInicial();
 }
@@ -110,16 +104,13 @@ void menuConfiguracoes(){
     cout<< "--------------------------------" << endl;
     cout<< "Num. |   Tipo de configuracao" << endl;
     cout<< "--------------------------------" << endl;
-    cout<< "1    |   Matriz de adjacencia" << endl;
-    cout<< "2    |   Lista de adjacencia" << endl;
-    cout<< "3    |   Arvore de profundidade" << endl;
-    cout<< "4    |   Arvore de largura" << endl;
-    cout<< "5    |   Arvore geradora minima" << endl;
-    cout<< "6    |   Ordem topologia" << endl;
-    cout<< "7    |   Vertices de articulacao" << endl; // Função não disponível em grafos não direcionado
-    cout<< "8    |   Caminho minimo entre dois vertices" << endl; // Função não disponível em grafos não ponderados
-    cout<< "9    |   Fluxo maximo" << endl; // Função não disponível em grafos não ponderados
-    cout<< "10   |   Fechamento transitivo" << endl; // Função não disponível em grafos não ponderados
+    cout<< "11    |   Arvore de profundidade" << endl;
+    cout<< "12    |   Arvore de largura" << endl;
+    cout<< "13    |   Arvore geradora minima" << endl;
+    cout<< "14    |   Ordem topologia" << endl;
+    cout<< "15    |   Caminho minimo entre dois vertices" << endl; // Função não disponível em grafos não ponderados
+    cout<< "16    |   Fluxo maximo" << endl; // Função não disponível em grafos não ponderados
+    cout<< "17   |   Fechamento transitivo" << endl; // Função não disponível em grafos não ponderados
     cout<< "--------------------------------" << endl << endl;
     retornoPaginaInicial();
 }
