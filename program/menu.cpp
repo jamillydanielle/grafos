@@ -108,9 +108,9 @@ void menuConfiguracoes(){
     cout<< "12    |   Arvore de largura" << endl;
     cout<< "13    |   Arvore geradora minima" << endl;
     cout<< "14    |   Ordem topologia" << endl;
-    cout<< "15    |   Caminho minimo entre dois vertices" << endl; // Função não disponível em grafos não ponderados
-    cout<< "16    |   Fluxo maximo" << endl; // Função não disponível em grafos não ponderados
-    cout<< "17   |   Fechamento transitivo" << endl; // Função não disponível em grafos não ponderados
+    cout<< "15    |   Caminho minimo entre dois vertices" << endl;
+    cout<< "16    |   Fluxo maximo" << endl;
+    cout<< "17   |   Fechamento transitivo" << endl;
     cout<< "--------------------------------" << endl << endl;
     retornoPaginaInicial();
 }
