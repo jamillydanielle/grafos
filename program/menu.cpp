@@ -1,12 +1,34 @@
 #include <iostream>
-
 using namespace std;
 
+// Informações
+string infoInsiraValor(){
+    return "> Insira o valor: "; 
+}
+
+string infoPaginaInicial(){
+    return "* Digite (0) para > voltar < para a pagina inicial"; 
+}
+
+string infoEncerrarPrograma(){
+    return "* Digite (0) para > encerrar < o programa"; 
+}
+
+string encerrarPrograma(){
+    return "* Programa encerrado!"; 
+}
+
+string infoValorInvalido(){
+    return "> Valor invalido, tente novamente."; 
+}
+
+// Menus
 enum Menu {
     MENU_PRINCIPAL,
     MENU_VERIFICACAO,
     MENU_LISTAGEM,
-    MENU_CONFIGURACOES
+    MENU_CONFIGURACOES,
+    MENU_TIPOGRAFO
 };
 
 int qntOpcoes(Menu menu){  
@@ -25,35 +47,23 @@ int qntOpcoes(Menu menu){
         case MENU_CONFIGURACOES:
             XOpcoes = 10;
             break;
+        case MENU_TIPOGRAFO:
+            XOpcoes = 2;
+            break;
         default:
             break;
     }
     return XOpcoes;
 }
 
-string retornoInsiraValor(){
-    return "> Insira o valor: "; 
-}
-
-string retornoPaginaInicial(){
-    return "* Digite (0) para voltar para a pagina inicial"; 
-}
-
-string retornoValorInvalido(){
-    return "> Valor invalido, tente novamente."; 
-}
-
-bool validacaoOpcaoSelecionada(Menu menu, int value){
-    bool valid = false;
-
-    if(value>qntOpcoes(menu) or value<1){
-        retornoValorInvalido();
-    }
-    else{
-        valid = true;
-    }
-
-    return valid;
+void menuTipoGrafo(){
+    cout<< "" << endl << "[ Tipo do grafo ]" << endl << endl;
+    cout<< "* Selecione o Num. da opcao ref. a configuracao do grafo:" << endl << endl;
+    cout<< "--------------------------------" << endl;
+    cout<< "Num. |   Tipo" << endl;
+    cout<< "--------------------------------" << endl;
+    cout<< "1    |   Direcionado" << endl;
+    cout<< "2    |   Nao direcionado" << endl << endl;
 }
 
 void menuPrincipal(){
@@ -79,7 +89,6 @@ void menuVerificacao(){
     cout<< "3    |   Euleriano" << endl;
     cout<< "4    |   Possui ciclo" << endl;
     cout<< "--------------------------------" << endl << endl;
-    retornoPaginaInicial();
 }
 
 void menuListagem(){
@@ -95,7 +104,6 @@ void menuListagem(){
     cout<< "9    |   Vertices de articulacao" << endl;
     cout<< "10   |   Arestas ponte" << endl;
     cout<< "--------------------------------" << endl << endl;
-    retornoPaginaInicial();
 }
 
 void menuConfiguracoes(){
@@ -112,11 +120,20 @@ void menuConfiguracoes(){
     cout<< "16    |   Fluxo maximo" << endl;
     cout<< "17    |   Fechamento transitivo" << endl;
     cout<< "--------------------------------" << endl << endl;
-    retornoPaginaInicial();
+}
+
+// Navegação
+bool validacaoOpcaoSelecionada(Menu menu, int value){
+    bool valid = false;
+
+    if(value>=1 and value<=qntOpcoes(menu)){
+        valid = true;
+    }
+
+    return valid;
 }
 
 void navegacaoPaginaInicial(int value){
-
     if(value == 1) {
         menuVerificacao();
     } else if(value == 2) {
@@ -124,51 +141,82 @@ void navegacaoPaginaInicial(int value){
     } else if(value == 3) {
         menuConfiguracoes();
     }
+}
+
+void navegacaoSubPaginas(){ // TODO: Finalizar
 }
 
 bool acessoSubPaginas(int value){
     if(validacaoOpcaoSelecionada(MENU_PRINCIPAL, value)==true){
         navegacaoPaginaInicial(value);
-        cout << retornoPaginaInicial() << endl << endl;
         return true;
     }else{
-        cout << retornoValorInvalido() << endl << endl;
         return false;
     }
 }
 
-void navegacaoSubPaginas(int value){ // Finalizar
-    if(value == 1) {
-        menuVerificacao();
-    } else if(value == 2) {
-        menuListagem();
-    } else if(value == 3) {
-        menuConfiguracoes();
+// Configuração
+bool grafoDirecionado(int value){
+    if(value == 1){
+        return true;
+    }
+    else{
+        return false;
     }
 }
 
-int main(){
+// Execução
 
+void execucao(){
     int value;
-    
-    menuPrincipal();
-    
-    cout << retornoInsiraValor();
-    cin >> value;
 
-    if (acessoSubPaginas(value)==true){
-        
-        cout << retornoInsiraValor();
-        cin >> value;
+    bool encerrar = false;
 
-        if(value == 0){
-            main();
+    while(!encerrar){
+
+        if (validacaoOpcaoSelecionada(MENU_TIPOGRAFO, value)){
+            menuTipoGrafo();
+            cout << infoEncerrarPrograma() << endl << endl << infoInsiraValor();
+            cin >> value;
+
+            if (value == 0){
+                encerrar = true;
+                break;
+            }
+
+            else cout << infoValorInvalido() << endl << endl;
         }
     }
 
-    else{
-        main();
+    while (!encerrar) {
+        menuPrincipal();
+        cout << infoEncerrarPrograma() << endl << endl;
+        
+        cout << infoInsiraValor();
+        cin >> value;
+
+        if (acessoSubPaginas(value)) {
+            cout << infoPaginaInicial() << endl << endl << infoInsiraValor();
+            cin >> value;
+
+            if (value == 0) continue;
+        }
+        else if (value == 0){
+            encerrar = true;
+        }
+        else{
+            cout << infoValorInvalido() << endl << endl;
+            continue;
+        }
     }
+
+    cout << encerrarPrograma() << endl << endl;
+
+}
+
+int main() {
+    
+    execucao();
 
     return 0;
 }
