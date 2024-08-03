@@ -37,7 +37,7 @@ bool verificaInicio(string value, int posLeitura)
 
 bool verificaFim(string value, int posLeitura)
 {
-    if (value[posLeitura + 1] == '}' and value[posLeitura + 2] == ';' and value[posLeitura + 3])
+    if (value[posLeitura + 1] == '}' and value[posLeitura + 2] == ';')
     {
         return true;
     }
@@ -65,37 +65,43 @@ int main()
         {
             if (!linha.empty())
             {
-                if (linha[posLeitura] == 'V' and verificaInicio(linha, posLeitura) == true)
+                if (linha[posLeitura] == 'V' and verificaInicio(linha, posLeitura))
                 { // Verificação de vértices
-                    posLeitura = posLeitura + 4;
+                    posLeitura = posLeitura + 5;
                     while (!verificaFim(linha, posLeitura))
                     {
+                        int posInicio = posLeitura;
+                        int intervalo;
+
+                        // Ler vértice
+                        while (linha[posLeitura] != ',')
+                        {
                             posLeitura++;
-                            int posInicio = posLeitura;
-                            int intervalo;
+                        }
+                        intervalo = posLeitura - posInicio;
+                        string vertice = linha.substr(posInicio, intervalo);
 
-                            // Ler vértice
-                            while (linha[posLeitura] != ',')
-                            {
-                                posLeitura++;
-                            }
-                            intervalo = posLeitura - posInicio;
-                            string vertice = linha.substr(posInicio, intervalo);
+                        vertices.push_back(vertice);
 
-                            vertices.push_back(vertice);
-
-                            posLeitura++; // Pula a vírgula -- incluir verificação de vírgula
-
+                        posLeitura++; // Pula a vírgula -- incluir verificação de vírgula
                     }
-                    posLeitura+3; // Pular '}; '
+
                 }
 
-                if (linha[posLeitura] == 'A' and verificaInicio(linha, posLeitura) == true)
-                {                                // Verificação de arestas
-                    posLeitura = posLeitura + 4; // Ignora os caracteres já verificados
+                posLeitura = posLeitura + 4;
+
+                if (linha[posLeitura] == 'A' and verificaInicio(linha, posLeitura))
+                {                      // Verificação de arestas
+                    posLeitura = posLeitura + 5; // Ignora os caracteres já verificados
                     while (!verificaFim(linha, posLeitura))
                     {
-                        if (linha[posLeitura] == '(')
+                        if (linha[posLeitura] == ')'){
+                            posLeitura ++;
+                            if (linha[posLeitura] == ','){
+                            posLeitura ++;
+                            }
+                        }
+                        else if (linha[posLeitura] == '(')
                         {
                             posLeitura++;
                             Aresta novaAresta;
@@ -107,6 +113,7 @@ int main()
                             {
                                 posLeitura++;
                             }
+
                             intervalo = posLeitura - posInicio;
                             novaAresta.origem = linha.substr(posInicio, intervalo);
 
@@ -135,25 +142,23 @@ int main()
                             int peso = stoi(pesoStr);
 
                             novaAresta.peso = peso;
-                            cout << "Teste leitura peso" << peso;
+                            arestas.push_back(novaAresta);
                         }
-
-                        posLeitura++; // Pular ')'
                     }
                 }
             }
         }
-    arquivo.close();
+        arquivo.close();
     }
 
-    cout << "Vertices lidos:" << endl;
+    cout << "--- Vertices lidos ---" << endl;
     for (const auto &vertice : vertices)
     {
         cout << "Vertice: " << vertice << endl;
     }
 
     // Exibe as arestas
-    cout << "Arestas lidas:" << endl;
+    cout << "--- Arestas lidas ---" << endl;
     for (const auto &aresta : arestas)
     {
         cout << "Origem: " << aresta.origem
