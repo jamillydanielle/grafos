@@ -48,7 +48,7 @@ bool verificaFim(string value, int posLeitura)
 }
 
 // Função para verificar se o grafo é euleriano para grafos direcionados e não direcionados
-bool isEulerian(const vector<Aresta>& arestas, const vector<string>& vertices, bool direcionado) {
+bool ehEuleriano(const vector<Aresta>& arestas, const vector<string>& vertices, bool direcionado) {
     if (direcionado) {
         // Verificação para grafos direcionados
         map<string, int> grauEntrada;
