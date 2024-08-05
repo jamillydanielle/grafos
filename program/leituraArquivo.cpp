@@ -2,6 +2,10 @@
 #include <fstream>
 #include <set>
 #include <regex>
+#include <vector>
+#include <map>
+#include <set>
+#include <queue>
 
 using namespace std;
 
@@ -39,6 +43,46 @@ bool verificaFim(string value, int posLeitura)
 {
     if (value[posLeitura + 1] == '}' and value[posLeitura + 2] == ';')
     {
+        return true;
+    }
+}
+
+// Função para verificar se o grafo é euleriano para grafos direcionados e não direcionados
+bool isEulerian(const vector<Aresta>& arestas, const vector<string>& vertices, bool direcionado) {
+    if (direcionado) {
+        // Verificação para grafos direcionados
+        map<string, int> grauEntrada;
+        map<string, int> grauSaida;
+        for (const auto& aresta : arestas) {
+            grauSaida[aresta.origem]++;
+            grauEntrada[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
+        for (const auto& vertice : vertices) {
+            if (grauEntrada[vertice] != grauSaida[vertice]) {
+                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
+                return false;
+            }
+        }
+
+        return true;
+    } else {
+        // Verificação para grafos não direcionados
+        map<string, int> grauVertices;
+        for (const auto& aresta : arestas) {
+            grauVertices[aresta.origem]++;
+            grauVertices[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau par
+        for (const auto& vertice : vertices) {
+            if (grauVertices[vertice] % 2 != 0) {
+                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
+                return false;
+            }
+        }
+
         return true;
     }
 }
