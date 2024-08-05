@@ -87,6 +87,44 @@ bool ehEuleriano(const vector<Aresta>& arestas, const vector<string>& vertices, 
     }
 }
 
+
+bool ehBipartido(const vector<Aresta>& arestas, const vector<string>& vertices) {
+    map<string, vector<string>> adjacencia;
+    for (const auto& aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        adjacencia[aresta.destino].push_back(aresta.origem);
+    }
+
+    map<string, int> cor;
+    for (const auto& vertice : vertices) {
+        cor[vertice] = -1; // -1 indica que o vértice não foi colorido ainda
+    }
+
+    for (const auto& vertice : vertices) {
+        if (cor[vertice] == -1) { // Vértice não colorido
+            queue<string> fila;
+            fila.push(vertice);
+            cor[vertice] = 0; // Começa colorindo o vértice inicial com a cor 0
+
+            while (!fila.empty()) {
+                string u = fila.front();
+                fila.pop();
+
+                for (const auto& v : adjacencia[u]) {
+                    if (cor[v] == -1) { // Se o vértice adjacente não foi colorido
+                        cor[v] = 1 - cor[u]; // Colore com a cor oposta
+                        fila.push(v);
+                    } else if (cor[v] == cor[u]) { // Se o vértice adjacente tem a mesma cor
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
 int main()
 {
 
@@ -209,6 +247,15 @@ int main()
              << ", Destino: " << aresta.destino
              << ", Peso: " << aresta.peso << endl;
     }
+
+
+    cout << "--- Verificacao de biparticao ---" << endl;
+    if (ehBipartido(arestas, vertices)) {
+        cout << "O grafo e bipartido." << endl;
+    } else {
+        cout << "O grafo nao e bipartido." << endl;
+    }
+
 
     return 0;
 }
