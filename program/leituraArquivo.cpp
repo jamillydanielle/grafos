@@ -45,6 +45,7 @@ bool verificaFim(string value, int posLeitura)
 
 int main()
 {
+    string nomeArquivo = "grafo.txt";
 
     ifstream arquivo;
     string linha;
@@ -52,7 +53,7 @@ int main()
     vector<Aresta> arestas;
     vector<string> vertices;
 
-    arquivo.open("grafo.txt");
+    arquivo.open(nomeArquivo);
 
     if (!arquivo.is_open())
     {
@@ -60,7 +61,7 @@ int main()
     }
 
     else
-    {
+    {   
         while (getline(arquivo, linha))
         {
             if (!linha.empty())
