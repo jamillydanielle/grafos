@@ -125,6 +125,49 @@ bool ehBipartido(const vector<Aresta>& arestas, const vector<string>& vertices) 
     return true;
 }
 
+enum Cor { BRANCO, CINZA, PRETO };
+
+bool dfsDetectarCiclo(const string& vertice, map<string, vector<string>>& adjacencia, map<string, Cor>& cor) {
+    cor[vertice] = CINZA; // Marca o vértice como cinza (em progresso)
+
+    for (const auto& vizinho : adjacencia[vertice]) {
+        if (cor[vizinho] == CINZA) {
+            // Encontrou um ciclo (vértice cinza no caminho atual)
+            return true;
+        } else if (cor[vizinho] == BRANCO) {
+            // Realiza DFS no vizinho
+            if (dfsDetectarCiclo(vizinho, adjacencia, cor)) {
+                return true;
+            }
+        }
+    }
+
+    cor[vertice] = PRETO; // Marca o vértice como preto (concluído)
+    return false;
+}
+
+bool detectarCiclos(const vector<string>& vertices, const vector<Aresta>& arestas) {
+    map<string, vector<string>> adjacencia;
+    for (const auto& aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+    }
+
+    map<string, Cor> cor;
+    for (const auto& vertice : vertices) {
+        cor[vertice] = BRANCO; // Inicializa todos os vértices como brancos
+    }
+
+    for (const auto& vertice : vertices) {
+        if (cor[vertice] == BRANCO) {
+            if (dfsDetectarCiclo(vertice, adjacencia, cor)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 bool ehConexo(const vector<Aresta>& arestas, const vector<string>& vertices) {
     map<string, vector<string>> adjacencia;
     for (const auto& aresta : arestas) {
@@ -159,6 +202,44 @@ bool ehConexo(const vector<Aresta>& arestas, const vector<string>& vertices) {
     }
 
     return true; // Todos os vértices foram visitados, logo o grafo é conexo
+}
+
+bool dfsCiclo(const string& vertice, map<string, vector<string>>& adjacencia,
+              map<string, int>& cores) {
+    // 1 representa cinza (visitado mas não terminado)
+    // 2 representa preto (visitado e terminado)
+    if (cores[vertice] == 1) return true; // Ciclo detectado
+    if (cores[vertice] == 2) return false; // Já visitado e terminado
+
+    cores[vertice] = 1; // Marca o vértice como cinza
+
+    for (const auto& vizinho : adjacencia[vertice]) {
+        if (dfsCiclo(vizinho, adjacencia, cores)) return true;
+    }
+
+    cores[vertice] = 2; // Marca o vértice como preto
+    return false;
+}
+
+// Função para verificar se o grafo é cíclico
+bool ehCiclico(const vector<Aresta>& arestas, const vector<string>& vertices) {
+    map<string, vector<string>> adjacencia;
+    for (const auto& aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+    }
+
+    map<string, int> cores; // 0: Branco, 1: Cinza, 2: Preto
+    for (const auto& vertice : vertices) {
+        cores[vertice] = 0; // Inicialmente todos os vértices são brancos
+    }
+
+    for (const auto& vertice : vertices) {
+        if (cores[vertice] == 0) { // Se o vértice ainda não foi visitado
+            if (dfsCiclo(vertice, adjacencia, cores)) return true;
+        }
+    }
+
+    return false; // Nenhum ciclo detectado
 }
 
 int main()
@@ -306,17 +387,24 @@ int main()
 
     cout << "--- Verificacao - Grafo conexo? ---" << endl;
     if (ehConexo(arestas, vertices)) {
-        cout << "Yes" << endl << endl;
+        cout << "(S)" << endl << endl;
     } else {
-        cout << "No" << endl << endl;
+        cout << "(N)" << endl << endl;
     }
 
 
     cout << "--- Verificacao - Grafo bipartido? ---" << endl;
     if (ehBipartido(arestas, vertices)) {
-        cout << "Yes" << endl << endl;
+        cout << "(S)" << endl << endl;
     } else {
-        cout << "No" << endl << endl;
+        cout << "(N)" << endl << endl;
+    }
+
+    cout << "--- Verificacao - Grafo ciclico? ---" << endl;
+    if (ehCiclico(arestas, vertices)) {
+        cout << "(S)" << endl << endl;
+    } else {
+        cout << "(N)" << endl << endl;
     }
 
 
