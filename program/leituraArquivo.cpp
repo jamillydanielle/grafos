@@ -47,47 +47,6 @@ bool verificaFim(string value, int posLeitura)
     }
 }
 
-// Função para verificar se o grafo é euleriano para grafos direcionados e não direcionados
-bool ehEuleriano(const vector<Aresta>& arestas, const vector<string>& vertices, bool direcionado) {
-    if (direcionado) {
-        // Verificação para grafos direcionados
-        map<string, int> grauEntrada;
-        map<string, int> grauSaida;
-        for (const auto& aresta : arestas) {
-            grauSaida[aresta.origem]++;
-            grauEntrada[aresta.destino]++;
-        }
-
-        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
-        for (const auto& vertice : vertices) {
-            if (grauEntrada[vertice] != grauSaida[vertice]) {
-                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
-                return false;
-            }
-        }
-
-        return true;
-    } else {
-        // Verificação para grafos não direcionados
-        map<string, int> grauVertices;
-        for (const auto& aresta : arestas) {
-            grauVertices[aresta.origem]++;
-            grauVertices[aresta.destino]++;
-        }
-
-        // Verificar se todos os vértices têm grau par
-        for (const auto& vertice : vertices) {
-            if (grauVertices[vertice] % 2 != 0) {
-                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
-
-
 bool ehBipartido(const vector<Aresta>& arestas, const vector<string>& vertices) {
     map<string, vector<string>> adjacencia;
     for (const auto& aresta : arestas) {
@@ -240,6 +199,53 @@ bool ehCiclico(const vector<Aresta>& arestas, const vector<string>& vertices) {
     }
 
     return false; // Nenhum ciclo detectado
+}
+
+bool ehFortementeConexo(const vector<Aresta>& arestas, const vector<string>& vertices) {
+    // Implementação da verificação de forte conectividade
+    // Pode utilizar Kosaraju's Algorithm ou Tarjan's Algorithm para verificar a forte conectividade
+    return true; 
+}
+
+bool ehEuleriano(const vector<Aresta>& arestas, const vector<string>& vertices, bool direcionado) {
+    if (direcionado) {
+        // Verificação para grafos direcionados
+        map<string, int> grauEntrada;
+        map<string, int> grauSaida;
+        for (const auto& aresta : arestas) {
+            grauSaida[aresta.origem]++;
+            grauEntrada[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
+        for (const auto& vertice : vertices) {
+            if (grauEntrada[vertice] != grauSaida[vertice]) {
+                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
+                return false;
+            }
+        }
+
+        // Verificar se o grafo é fortemente conexo
+        return ehFortementeConexo(arestas, vertices);
+    } else {
+        // Verificação para grafos não direcionados
+        map<string, int> grauVertices;
+        for (const auto& aresta : arestas) {
+            grauVertices[aresta.origem]++;
+            grauVertices[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau par
+        for (const auto& vertice : vertices) {
+            if (grauVertices[vertice] % 2 != 0) {
+                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
+                return false;
+            }
+        }
+
+        // Verificar se o grafo é conexo
+        return ehConexo(arestas, vertices);
+    }
 }
 
 int main()
@@ -407,6 +413,12 @@ int main()
         cout << "(N)" << endl << endl;
     }
 
-
+    cout << "--- Verificacao - Grafo euleriano? ---" << endl;
+    bool direcionado = false; // Defina se o grafo é direcionado ou não
+    if (ehEuleriano(arestas, vertices, direcionado)) {
+        cout << "(S)" << endl << endl;
+    } else {
+        cout << "(N)" << endl << endl;
+    }
     return 0;
 }
