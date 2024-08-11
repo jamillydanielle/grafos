@@ -8,46 +8,7 @@
 
 using namespace std;
 
-// # CONFIGURAÇÕES / VARIAVEIS GLOBAIS
-struct Aresta
-{
-    string origem;
-    string destino;
-    int peso;
-};
-
-void leituraGrafo()
-{
-    int numVertices, numArestas;
-    string tipoGrafo;
-
-    cout << "Insira a qtd. de vertices e arestas: ";
-    cin >> numVertices >> numArestas; // criar função que verifica este dado
-
-    cout << "O grafo eh direcionado ou nao_direcionado? ";
-    cin >> tipoGrafo; // criar função que verifica este dado
-
-    vector<Aresta> arestas(numArestas);
-    vector<string> vertices(numVertices);
-
-    cout << "Insira as arestas no formato: id_aresta u v p\n";
-    for (int i = 0; i < numArestas; ++i)
-    {
-        int id, u, v, p;
-        cin >> id >> u >> v >> p;
-        arestas[i] = {to_string(u), to_string(v), p};
-        if (find(vertices.begin(), vertices.end(), to_string(u)) == vertices.end())
-        {
-            vertices.push_back(to_string(u));
-        }
-        if (find(vertices.begin(), vertices.end(), to_string(v)) == vertices.end())
-        {
-            vertices.push_back(to_string(v));
-        }
-    }
-}
-
-// # MENU - MENSAGENS DE ERRO
+// # MENU - MENSAGENS
 string retornoInsiraValor()
 {
     return "> Insira o valor: ";
@@ -61,6 +22,86 @@ string retornoPaginaInicial()
 string retornoValorInvalido()
 {
     return "> Valor invalido, tente novamente.";
+}
+
+// # CONFIGURAÇÕES / VARIAVEIS GLOBAIS
+struct Aresta
+{
+    string origem;
+    string destino;
+    int peso;
+};
+
+void boasVindas()
+{
+    cout << "[ Boas vindas! ]" << endl
+         << endl;
+    cout << "* Este e um programa de analise de propriedades de grafos..." << endl
+         << endl;
+
+    cout << "--------------------------------------------" << endl;
+    cout << "Trabalho desenvolvido por:" << endl;
+    cout << "--------------------------------------------" << endl;
+    cout << "Davi Gomides" << endl;
+    cout << "Ingrid de Falchi" << endl;
+    cout << "Jamilly Danielle" << endl;
+    cout << "--------------------------------------------" << endl;
+
+    cout << endl
+         << "Vamos iniciar! ..." << endl
+         << endl;
+}
+
+void leituraGrafo()
+{
+    int numVertices, numArestas;
+    string tipoGrafo;
+
+    cout << endl
+         << "> Insira a qtd. de Vertices e Arestas: ";
+    cin >> numVertices >> numArestas; // criar função que verifica este dado
+
+    cout << endl
+         << endl;
+
+    cout << "[ Tipo Grafo ]" << endl
+         << endl;
+    cout << "* Selecione o Num. da opcao desejada:" << endl
+         << endl;
+    cout << "--------------------------------------------" << endl;
+    cout << "Valor               |   Tipo" << endl;
+    cout << "--------------------------------------------" << endl;
+    cout << "direcionado         |   Direcionado" << endl;
+    cout << "nao_direcionado     |   Nao direcionado" << endl;
+    cout << "--------------------------------------------" << endl;
+
+    cout << endl
+         << retornoInsiraValor();
+    cin >> tipoGrafo; // criar função que verifica este dado
+
+    vector<Aresta> arestas(numArestas);
+    vector<string> vertices(numVertices);
+
+    cout << endl
+         << "> Insira as arestas no formato: id_aresta u v p\n";
+    cout << "* Ex.: 0 a b 5" << endl
+         << endl;
+    for (int i = 0; i < numArestas; ++i)
+    {
+        int id, u, v, p;
+        cout << i << "/" << numArestas << ": ";
+        retornoInsiraValor();
+        cin >> id >> u >> v >> p;
+        arestas[i] = {to_string(u), to_string(v), p};
+        if (find(vertices.begin(), vertices.end(), to_string(u)) == vertices.end())
+        {
+            vertices.push_back(to_string(u));
+        }
+        if (find(vertices.begin(), vertices.end(), to_string(v)) == vertices.end())
+        {
+            vertices.push_back(to_string(v));
+        }
+    }
 }
 
 // # MENU - LISTAGEM DE OPÇÕES
@@ -192,53 +233,154 @@ void menuConfiguracoes()
 }
 
 // # MENU - VERIFICAÇÕES
-bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices)
+bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
-    cout << "--- Verificacao - Grafo conexo? ---" << endl;
-    if (ehConexo(arestas, vertices))
+    if (direcionado)
     {
-        cout << "Yes" << endl
-             << endl;
+        // Verificação para grafos direcionados
+        map<string, int> grauEntrada;
+        map<string, int> grauSaida;
+        for (const auto &aresta : arestas)
+        {
+            grauSaida[aresta.origem]++;
+            grauEntrada[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
+        for (const auto &vertice : vertices)
+        {
+            if (grauEntrada[vertice] != grauSaida[vertice])
+            {
+                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
+                return false;
+            }
+        }
+
+        return true;
     }
     else
     {
-        cout << "No" << endl
-             << endl;
+        // Verificação para grafos não direcionados
+        map<string, int> grauVertices;
+        for (const auto &aresta : arestas)
+        {
+            grauVertices[aresta.origem]++;
+            grauVertices[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau par
+        for (const auto &vertice : vertices)
+        {
+            if (grauVertices[vertice] % 2 != 0)
+            {
+                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
+                return false;
+            }
+        }
+
+        return true;
     }
-    return true;
 }
 
 bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
 {
-    cout << "--- Verificacao - Grafo bipartido? ---" << endl;
-    if (ehBipartido(arestas, vertices))
+    map<string, vector<string>> adjacencia;
+    for (const auto &aresta : arestas)
     {
-        cout << "Yes" << endl
-             << endl;
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        adjacencia[aresta.destino].push_back(aresta.origem);
     }
-    else
+
+    map<string, int> cor;
+    for (const auto &vertice : vertices)
     {
-        cout << "No" << endl
-             << endl;
+        cor[vertice] = -1; // -1 indica que o vértice não foi colorido ainda
     }
+
+    for (const auto &vertice : vertices)
+    {
+        if (cor[vertice] == -1)
+        { // Vértice não colorido
+            queue<string> fila;
+            fila.push(vertice);
+            cor[vertice] = 0; // Começa colorindo o vértice inicial com a cor 0
+
+            while (!fila.empty())
+            {
+                string u = fila.front();
+                fila.pop();
+
+                for (const auto &v : adjacencia[u])
+                {
+                    if (cor[v] == -1)
+                    {                        // Se o vértice adjacente não foi colorido
+                        cor[v] = 1 - cor[u]; // Colore com a cor oposta
+                        fila.push(v);
+                    }
+                    else if (cor[v] == cor[u])
+                    { // Se o vértice adjacente tem a mesma cor
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
-bool ehEureliano(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices)
 {
-    cout << "--- Verificacao - Grafo euleriano? ---" << endl;
-    cout << "O grafo é direcionado? (1 para Sim, 0 para Não): ";
-    bool direcionado;
-    cin >> direcionado;
-    if (ehEuleriano(arestas, vertices, direcionado))
+    map<string, vector<string>> adjacencia;
+    for (const auto &aresta : arestas)
     {
-        cout << "Yes" << endl
-             << endl;
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        adjacencia[aresta.destino].push_back(aresta.origem);
     }
-    else
+
+    if (vertices.empty())
+        return true; // Grafo vazio é considerado conexo
+
+    set<string> visitados;
+    queue<string> fila;
+    fila.push(vertices[0]); // Começa com o primeiro vértice
+    visitados.insert(vertices[0]);
+
+    while (!fila.empty())
     {
-        cout << "No" << endl
-             << endl;
+        string u = fila.front();
+        fila.pop();
+
+        for (const auto &v : adjacencia[u])
+        {
+            if (visitados.find(v) == visitados.end())
+            {
+                visitados.insert(v);
+                fila.push(v);
+            }
+        }
     }
+
+    // Verifica se todos os vértices foram visitados
+    for (const auto &vertice : vertices)
+    {
+        if (visitados.find(vertice) == visitados.end())
+        {
+            return false; // Algum vértice não foi visitado, logo o grafo é desconexo
+        }
+    }
+
+    return true; // Todos os vértices foram visitados, logo o grafo é conexo
+}
+
+bool possuiCiclo()
+{
+    return false;
+}
+
+bool ehEureliano()
+{
+    return false;
 }
 
 // # MENU - NAVEGAÇÕES
@@ -278,22 +420,51 @@ bool acessoSubPaginas(int value)
 
 void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
+    int valueSubMenu = value;
+
     if (value == 1)
     {
-        menuVerificacao();
 
-        switch (value)
+        switch (valueSubMenu)
         {
         case 1: // Verificação de grafo conexo
-            ehConexo(arestas, vertices);
+            cout << endl
+                 << "--- Verificacao - Grafo conexo? ---" << endl;
+            if (ehConexo(arestas, vertices))
+            {
+                cout << "Yes" << endl
+                     << endl;
+            }
+            else
+            {
+                cout << "No" << endl
+                     << endl;
+            }
             break;
         case 2: // Verificação de grafo bipartido
-            ehBipartido(arestas, vertices, direcionado);
+            cout << endl
+                 << "--- Verificacao - Grafo bipartido? ---" << endl;
+            if (ehBipartido(arestas, vertices))
+            {
+                cout << "Yes" << endl
+                     << endl;
+            }
+            else
+            {
+                cout << "No" << endl
+                     << endl;
+            }
             break;
         case 3: // Verificação de grafo euleriano
-            ehEureliano(arestas, vertices, direcionado);
+                // ehEureliano(arestas, vertices, direcionado);
+            cout << endl
+                 << "implementar";
             break;
-        // Adicione mais casos conforme necessário
+        case 4: // Verificação de ciclo
+            possuiCiclo();
+            cout << endl
+                 << "implementar";
+            break;
         default:
             cout << retornoValorInvalido() << endl;
             break;
@@ -310,36 +481,54 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
 }
 
 // # MENU - EXECUÇÃO
-
 void executarMenu()
 {
     int value;
+    int optionsEndProgram;
+    bool direcionado;
+    bool encerrarPrograma = false;
+    vector<Aresta> arestas;
+    vector<string> vertices;
+
+    boasVindas();
+    leituraGrafo();
 
     menuPrincipal();
-
     cout << retornoInsiraValor();
     cin >> value;
 
-    if (acessoSubPaginas(value) == true)
+    while (encerrarPrograma == false)
     {
-
-        cout << retornoInsiraValor();
-        cin >> value;
-
-        if (value == 0)
+        if (acessoSubPaginas(value) == true)
         {
-            executarMenu();
+
+            cout << retornoInsiraValor();
+            cin >> value;
+
+            if (value == 0)
+            {
+                executarMenu();
+            }
+            else
+            {
+                navegacaoSubPaginas(value, arestas, vertices, direcionado);
+            }
         }
         else
         {
-            vector<Aresta> arestas;
-            vector<string> vertices;
-            navegacaoSubPaginas(value, arestas, vertices);
+            executarMenu();
         }
-    }
-    else
-    {
-        executarMenu();
+
+        cout << "Deseja realizar uma nova analise? 1 - Sim | 2 - Nao" << endl;
+        cout << retornoInsiraValor();
+        cin >> optionsEndProgram;
+
+        cout << endl << endl;
+
+        if(optionsEndProgram == 2){
+            cout << "Programa finalizado! Ate mais!";
+            encerrarPrograma = true;
+        }
     }
 }
 
