@@ -27,6 +27,7 @@ string retornoValorInvalido()
 // # CONFIGURAÇÕES / VARIAVEIS GLOBAIS
 struct Aresta
 {
+    int id;
     string origem;
     string destino;
     int peso;
@@ -47,42 +48,7 @@ void boasVindas()
     cout << "Jamilly Danielle" << endl;
     cout << "--------------------------------------------" << endl;
 
-    cout << endl
-         << "Vamos iniciar! ..." << endl
-         << endl;
-}
-
-bool validarVerticesEArestas(const string &entrada, int &numVertices, int &numArestas) {
-    istringstream iss(entrada);
-    string strVertices, strArestas;
-
-    if (!(iss >> strVertices >> strArestas)) {
-        return false;
-    }
-
-    if (!validarEntrada(strVertices, "inteiro") || !validarEntrada(strArestas, "inteiro")) {
-        return false;
-    }
-
-    numVertices = stoi(strVertices);
-    numArestas = stoi(strArestas);
-
-    return numVertices > 0 && numArestas > 0;
-}
-
-void solicitarVerticesEArestas(int &numVertices, int &numArestas) {
-    string entrada;
-    bool valido = false;
-
-    while (!valido) {
-        getline(cin, entrada);
-
-        if (validarVerticesEArestas(entrada, numVertices, numArestas)) {
-            valido = true;
-        } else {
-            cout << endl << retornoValorInvalido() << endl;
-        }
-    }
+    cout << endl << "Vamos iniciar! ..." << endl << endl << endl;
 }
 
 bool validarEntrada(const string &valor, const string &tipoValidacao){
@@ -96,7 +62,7 @@ bool validarEntrada(const string &valor, const string &tipoValidacao){
     }
     else if (tipoValidacao == "tipoGrafo")
     {
-        return (valor == "direcionado" || valor == "nao_direcionado");
+        return (valor == "direcionado" or valor == "nao_direcionado");
     }
     else if (tipoValidacao == "caractereAlfanumerico")
     {
@@ -110,6 +76,41 @@ bool validarEntrada(const string &valor, const string &tipoValidacao){
     else
     {
         return false;
+    }
+}
+
+bool validarVerticesEArestas(const string &entrada, int &numVertices, int &numArestas) {
+    istringstream iss(entrada);
+    string strVertices, strArestas;
+
+    if (!(iss >> strVertices >> strArestas)) {
+        return false;
+    }
+
+    if (!validarEntrada(strVertices, "inteiro") or !validarEntrada(strArestas, "inteiro")) {
+        return false;
+    }
+
+    numVertices = stoi(strVertices);
+    numArestas = stoi(strArestas);
+
+    return numVertices > 0 and numArestas > 0;
+}
+
+void solicitarVerticesEArestas(int &numVertices, int &numArestas) {
+    string entrada;
+    bool valido = false;
+
+    while (!valido) {
+        cout << endl << retornoInsiraValor();
+
+        getline(cin, entrada);
+
+        if (validarVerticesEArestas(entrada, numVertices, numArestas)) {
+            valido = true;
+        } else {
+            cout << endl << retornoValorInvalido() << endl;
+        }
     }
 }
 
@@ -136,13 +137,71 @@ string solicitarValor(const string &tipoValidacao)
     return valor;
 }
 
+bool validarAresta(const string& input) {
+    istringstream value(input);
+    string u, v;
+    int id;
+    float p;
+
+    value >> id  >> u >> v >> p;
+
+    // Verifica se a leitura das variáveis foi bem-sucedida
+    if (value.fail() or !value.eof()) {
+        return false;
+    }
+
+    // Valida cada parte da entrada
+    return validarEntrada(to_string(id), "inteiro") and
+           validarEntrada(to_string(p), "float") and
+           validarEntrada(u, "caractereAlfanumerico") and
+           validarEntrada(v, "caractereAlfanumerico");
+}
+
+void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numArestas) {
+    for (int i = 0; i < numArestas; ++i) {
+        string input;
+        bool valido = false;
+
+        while (!valido)
+        {
+            cout << "> " << i + 1 << "/" << numArestas << ": "; //#TODO - Tratar exibição de primeira leitura, onde aparece 1/n - já exibindo que o valor não está válido sem nem ter preenchido nada
+            getline(cin, input);
+
+            if (validarAresta(input))
+            {
+                valido = true;
+            }
+            else
+            {
+                cout << endl << retornoValorInvalido() << endl << endl;
+            }
+        }
+
+        int id;
+        string u, v;
+        float p;
+        istringstream value(input);
+        value >> id >> u >> v >> p;
+
+        arestas.push_back(Aresta{id, u, v, static_cast<int>(p)});
+
+        if (find(vertices.begin(), vertices.end(), u) == vertices.end()) {
+            vertices.push_back(u);
+        }
+        if (find(vertices.begin(), vertices.end(), v) == vertices.end()) {
+            vertices.push_back(v);
+        }
+    }
+}
+
 void leituraGrafo()
 {
     int numVertices, numArestas;
     string tipoGrafo;
 
     cout << "[ Qtd. Vertices e Arestas ]" << endl << endl;
-    cout << endl << "> Insira a qtd. de Vertices e Arestas: ";
+    cout << "* Insira a qtd. de Vertices e Arestas" << endl;
+    
     solicitarVerticesEArestas(numVertices, numArestas);
 
     vector<Aresta> arestas(numArestas);
@@ -158,31 +217,15 @@ void leituraGrafo()
     cout << "direcionado         |   Direcionado" << endl;
     cout << "nao_direcionado     |   Nao direcionado" << endl;
     cout << "--------------------------------------------" << endl;
-
-    cout << endl;
     tipoGrafo = solicitarValor("tipoGrafo");
 
     cout << endl << endl;
 
     cout << "[ Config. Arestas ]" << endl << endl;
-    cout << endl << "* Insira as arestas no formato: id_aresta u v p\n" << "Ex.: 0 a b 5" << endl << endl; // Criar função para validar esta entrada
+    cout << "* Insira as arestas no formato: id_aresta u v p\n" << "--- Ex.: 0 a b 5 ---" << endl;
+    cout << "--------------------------------------------" << endl << endl;
+    insiraArestas(arestas, vertices, numArestas);
 
-    for (int i = 0; i < numArestas; ++i)
-    {
-        int id, u, v, p;
-        cout << i << "/" << numArestas << ": ";
-        retornoInsiraValor();
-        cin >> id >> u >> v >> p;
-        arestas[i] = {to_string(u), to_string(v), p};
-        if (find(vertices.begin(), vertices.end(), to_string(u)) == vertices.end())
-        {
-            vertices.push_back(to_string(u));
-        }
-        if (find(vertices.begin(), vertices.end(), to_string(v)) == vertices.end())
-        {
-            vertices.push_back(to_string(v));
-        }
-    }
 }
 
 // # MENU - LISTAGEM DE OPÇÕES
@@ -454,14 +497,94 @@ bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices)
     return true; // Todos os vértices foram visitados, logo o grafo é conexo
 }
 
-bool possuiCiclo()
-{
+enum CorVertice { BRANCO, CINZA, PRETO };
+
+bool possuiCiclo(const string& vertice, map<string, vector<string>>& adjacencia, map<string, CorVertice>& cor) {
+    cor[vertice] = CINZA; // Marca o vértice como cinza (em progresso)
+
+    for (const auto& vizinho : adjacencia[vertice]) {
+        if (cor[vizinho] == CINZA) {
+            // Encontrou um ciclo (vértice cinza no caminho atual)
+            return true;
+        } else if (cor[vizinho] == BRANCO) {
+            // Realiza DFS no vizinho
+            if (possuiCiclo(vizinho, adjacencia, cor)) {
+                return true;
+            }
+        }
+    }
+
+    cor[vertice] = PRETO; // Marca o vértice como preto (concluído)
     return false;
 }
 
-bool ehEureliano()
-{
+bool possuiMultiplosCiclos(const vector<string>& vertices, const vector<Aresta>& arestas) {
+    map<string, vector<string>> adjacencia;
+    for (const auto& aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+    }
+
+    map<string, CorVertice> cor;
+    for (const auto& vertice : vertices) {
+        cor[vertice] = BRANCO;
+    }
+
+    for (const auto& vertice : vertices) {
+        if (cor[vertice] == BRANCO) {
+            if (possuiCiclo(vertice, adjacencia, cor)) {
+                return true;
+            }
+        }
+    }
+
     return false;
+}
+
+bool ehFortementeConexo(const vector<Aresta>& arestas, const vector<string>& vertices) {
+    // Implementação da verificação de forte conectividade
+    // Pode utilizar Kosaraju's Algorithm ou Tarjan's Algorithm para verificar a forte conectividade
+    return true; 
+}
+
+bool ehEuleriano(const vector<Aresta>& arestas, const vector<string>& vertices, bool direcionado) {
+    if (direcionado) {
+        // Verificação para grafos direcionados
+        map<string, int> grauEntrada;
+        map<string, int> grauSaida;
+        for (const auto& aresta : arestas) {
+            grauSaida[aresta.origem]++;
+            grauEntrada[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
+        for (const auto& vertice : vertices) {
+            if (grauEntrada[vertice] != grauSaida[vertice]) {
+                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
+                return false;
+            }
+        }
+
+        // Verificar se o grafo é fortemente conexo
+        return ehFortementeConexo(arestas, vertices);
+    } else {
+        // Verificação para grafos não direcionados
+        map<string, int> grauVertices;
+        for (const auto& aresta : arestas) {
+            grauVertices[aresta.origem]++;
+            grauVertices[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau par
+        for (const auto& vertice : vertices) {
+            if (grauVertices[vertice] % 2 != 0) {
+                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
+                return false;
+            }
+        }
+
+        // Verificar se o grafo é conexo
+        return ehConexo(arestas, vertices);
+    }
 }
 
 // # MENU - NAVEGAÇÕES
@@ -537,14 +660,32 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
             }
             break;
         case 3: // Verificação de grafo euleriano
-                // ehEureliano(arestas, vertices, direcionado);
             cout << endl
-                 << "implementar";
+                 << "--- Verificacao - Grafo eureliano? ---" << endl;
+            if (ehEuleriano(arestas, vertices, direcionado))
+            {
+                cout << "Yes" << endl
+                     << endl;
+            }
+            else
+            {
+                cout << "No" << endl
+                     << endl;
+            }
             break;
         case 4: // Verificação de ciclo
-            possuiCiclo();
             cout << endl
-                 << "implementar";
+                 << "--- Verificacao - Grafo possui ciclo? ---" << endl;
+            if (possuiCiclo(arestas, vertices, direcionado))
+            {
+                cout << "Yes" << endl
+                     << endl;
+            }
+            else
+            {
+                cout << "No" << endl
+                     << endl;
+            }
             break;
         default:
             cout << retornoValorInvalido() << endl;
@@ -562,7 +703,7 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
 }
 
 // # MENU - EXECUÇÃO
-void executarMenu() // Corrigir execução - na segunda consulta, não funciona corretamente
+void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não funciona corretamente
 {
     int value;
     int optionsEndProgram;
@@ -574,17 +715,19 @@ void executarMenu() // Corrigir execução - na segunda consulta, não funciona 
     boasVindas();
     leituraGrafo();
 
-    menuPrincipal();
+    menuPrincipal(); // #TODO - Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
     cout << retornoInsiraValor();
     cin >> value;
+    cin.ignore();
 
     while (encerrarPrograma == false)
     {
-        if (acessoSubPaginas(value) == true)
+        if (acessoSubPaginas(value) == true) // #TODO - No submenu, ao inserir valor inválido, entra em loop
         {
 
             cout << retornoInsiraValor();
             cin >> value;
+            cin.ignore();
 
             if (value == 0)
             {
@@ -592,7 +735,7 @@ void executarMenu() // Corrigir execução - na segunda consulta, não funciona 
             }
             else
             {
-                navegacaoSubPaginas(value, arestas, vertices, direcionado);
+                navegacaoSubPaginas(value, arestas, vertices, direcionado); // #TODO - No submenu, ao inserir para voltar para a página inicial, o programa reinicia ao invés de voltar para o menu inicial de grafos
             }
         }
         else
@@ -603,6 +746,7 @@ void executarMenu() // Corrigir execução - na segunda consulta, não funciona 
         cout << "Deseja realizar uma nova analise? 1 - Sim | 2 - Nao" << endl;
         cout << endl << retornoInsiraValor();
         cin >> optionsEndProgram;
+        cin.ignore();
 
         cout << endl << endl;
 
