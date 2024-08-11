@@ -21,7 +21,7 @@ string retornoPaginaInicial()
 
 string retornoValorInvalido()
 {
-    return "> Valor invalido, tente novamente.";
+    return "Valor invalido, tente novamente.";
 }
 
 // # CONFIGURAÇÕES / VARIAVEIS GLOBAIS
@@ -52,22 +52,106 @@ void boasVindas()
          << endl;
 }
 
+bool validarVerticesEArestas(const string &entrada, int &numVertices, int &numArestas) {
+    istringstream iss(entrada);
+    string strVertices, strArestas;
+
+    if (!(iss >> strVertices >> strArestas)) {
+        return false;
+    }
+
+    if (!validarEntrada(strVertices, "inteiro") || !validarEntrada(strArestas, "inteiro")) {
+        return false;
+    }
+
+    numVertices = stoi(strVertices);
+    numArestas = stoi(strArestas);
+
+    return numVertices > 0 && numArestas > 0;
+}
+
+void solicitarVerticesEArestas(int &numVertices, int &numArestas) {
+    string entrada;
+    bool valido = false;
+
+    while (!valido) {
+        getline(cin, entrada);
+
+        if (validarVerticesEArestas(entrada, numVertices, numArestas)) {
+            valido = true;
+        } else {
+            cout << endl << retornoValorInvalido() << endl;
+        }
+    }
+}
+
+bool validarEntrada(const string &valor, const string &tipoValidacao){
+    if (tipoValidacao == "inteiro")
+    {
+        return regex_match(valor, regex("^[0-9]+$"));
+    }
+    else if (tipoValidacao == "float")
+    {
+        return regex_match(valor, regex("^[0-9]*\\.?[0-9]+$"));
+    }
+    else if (tipoValidacao == "tipoGrafo")
+    {
+        return (valor == "direcionado" || valor == "nao_direcionado");
+    }
+    else if (tipoValidacao == "caractereAlfanumerico")
+    {
+        return regex_match(valor, regex("^[a-zA-Z0-9]+$"));
+    }
+    else if (tipoValidacao == "verticesArestas")
+    {
+        int valorInt = stoi(valor);
+        return valorInt > 0;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+string solicitarValor(const string &tipoValidacao)
+{
+    string valor;
+    bool valido = false;
+
+    while (!valido)
+    {
+        cout << endl << retornoInsiraValor();
+        cin >> valor;
+
+        if (validarEntrada(valor, tipoValidacao))
+        {
+            valido = true;
+        }
+        else
+        {
+            cout << endl << retornoValorInvalido() << endl;
+        }
+    }
+
+    return valor;
+}
+
 void leituraGrafo()
 {
     int numVertices, numArestas;
     string tipoGrafo;
 
-    cout << endl
-         << "> Insira a qtd. de Vertices e Arestas: ";
-    cin >> numVertices >> numArestas; // criar função que verifica este dado
+    cout << "[ Qtd. Vertices e Arestas ]" << endl << endl;
+    cout << endl << "> Insira a qtd. de Vertices e Arestas: ";
+    solicitarVerticesEArestas(numVertices, numArestas);
 
-    cout << endl
-         << endl;
+    vector<Aresta> arestas(numArestas);
+    vector<string> vertices(numVertices);
 
-    cout << "[ Tipo Grafo ]" << endl
-         << endl;
-    cout << "* Selecione o Num. da opcao desejada:" << endl
-         << endl;
+    cout << endl << endl;
+
+    cout << "[ Tipo Grafo ]" << endl << endl;
+    cout << "* Selecione o Num. da opcao desejada:" << endl << endl;
     cout << "--------------------------------------------" << endl;
     cout << "Valor               |   Tipo" << endl;
     cout << "--------------------------------------------" << endl;
@@ -75,17 +159,14 @@ void leituraGrafo()
     cout << "nao_direcionado     |   Nao direcionado" << endl;
     cout << "--------------------------------------------" << endl;
 
-    cout << endl
-         << retornoInsiraValor();
-    cin >> tipoGrafo; // criar função que verifica este dado
+    cout << endl;
+    tipoGrafo = solicitarValor("tipoGrafo");
 
-    vector<Aresta> arestas(numArestas);
-    vector<string> vertices(numVertices);
+    cout << endl << endl;
 
-    cout << endl
-         << "> Insira as arestas no formato: id_aresta u v p\n";
-    cout << "* Ex.: 0 a b 5" << endl
-         << endl;
+    cout << "[ Config. Arestas ]" << endl << endl;
+    cout << endl << "* Insira as arestas no formato: id_aresta u v p\n" << "Ex.: 0 a b 5" << endl << endl; // Criar função para validar esta entrada
+
     for (int i = 0; i < numArestas; ++i)
     {
         int id, u, v, p;
@@ -481,7 +562,7 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
 }
 
 // # MENU - EXECUÇÃO
-void executarMenu()
+void executarMenu() // Corrigir execução - na segunda consulta, não funciona corretamente
 {
     int value;
     int optionsEndProgram;
@@ -520,7 +601,7 @@ void executarMenu()
         }
 
         cout << "Deseja realizar uma nova analise? 1 - Sim | 2 - Nao" << endl;
-        cout << retornoInsiraValor();
+        cout << endl << retornoInsiraValor();
         cin >> optionsEndProgram;
 
         cout << endl << endl;
