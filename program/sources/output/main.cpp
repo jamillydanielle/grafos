@@ -357,54 +357,6 @@ void menuConfiguracoes()
 }
 
 // # MENU - VERIFICAÇÕES
-bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
-{
-    if (direcionado)
-    {
-        // Verificação para grafos direcionados
-        map<string, int> grauEntrada;
-        map<string, int> grauSaida;
-        for (const auto &aresta : arestas)
-        {
-            grauSaida[aresta.origem]++;
-            grauEntrada[aresta.destino]++;
-        }
-
-        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
-        for (const auto &vertice : vertices)
-        {
-            if (grauEntrada[vertice] != grauSaida[vertice])
-            {
-                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
-                return false;
-            }
-        }
-
-        return true;
-    }
-    else
-    {
-        // Verificação para grafos não direcionados
-        map<string, int> grauVertices;
-        for (const auto &aresta : arestas)
-        {
-            grauVertices[aresta.origem]++;
-            grauVertices[aresta.destino]++;
-        }
-
-        // Verificar se todos os vértices têm grau par
-        for (const auto &vertice : vertices)
-        {
-            if (grauVertices[vertice] % 2 != 0)
-            {
-                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
 
 bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
 {
@@ -497,6 +449,55 @@ bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices)
     return true; // Todos os vértices foram visitados, logo o grafo é conexo
 }
 
+bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+{
+    if (direcionado)
+    {
+        // Verificação para grafos direcionados
+        map<string, int> grauEntrada;
+        map<string, int> grauSaida;
+        for (const auto &aresta : arestas)
+        {
+            grauSaida[aresta.origem]++;
+            grauEntrada[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
+        for (const auto &vertice : vertices)
+        {
+            if (grauEntrada[vertice] != grauSaida[vertice])
+            {
+                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
+                return false;
+            }
+        }
+
+        return true;
+    }
+    else
+    {
+        // Verificação para grafos não direcionados
+        map<string, int> grauVertices;
+        for (const auto &aresta : arestas)
+        {
+            grauVertices[aresta.origem]++;
+            grauVertices[aresta.destino]++;
+        }
+
+        // Verificar se todos os vértices têm grau par
+        for (const auto &vertice : vertices)
+        {
+            if (grauVertices[vertice] % 2 != 0)
+            {
+                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
 enum CorVertice { BRANCO, CINZA, PRETO };
 
 bool possuiCiclo(const string& vertice, map<string, vector<string>>& adjacencia, map<string, CorVertice>& cor) {
@@ -539,52 +540,35 @@ bool possuiMultiplosCiclos(const vector<string>& vertices, const vector<Aresta>&
 
     return false;
 }
+//busca em largura
+void dfs(const string &vertice, const map<string, vector<string>> &adjacencia, set<string> &visitados) {
+    visitados.insert(vertice);
 
-bool ehFortementeConexo(const vector<Aresta>& arestas, const vector<string>& vertices) {
-    // Implementação da verificação de forte conectividade
-    // Pode utilizar Kosaraju's Algorithm ou Tarjan's Algorithm para verificar a forte conectividade
-    return true; 
+    for (const auto &vizinho : adjacencia.at(vertice)) {
+        if (visitados.find(vizinho) == visitados.end()) {
+            dfs(vizinho, adjacencia, visitados);
+        }
+    }
 }
 
-bool ehEuleriano(const vector<Aresta>& arestas, const vector<string>& vertices, bool direcionado) {
-    if (direcionado) {
-        // Verificação para grafos direcionados
-        map<string, int> grauEntrada;
-        map<string, int> grauSaida;
-        for (const auto& aresta : arestas) {
-            grauSaida[aresta.origem]++;
-            grauEntrada[aresta.destino]++;
-        }
-
-        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
-        for (const auto& vertice : vertices) {
-            if (grauEntrada[vertice] != grauSaida[vertice]) {
-                cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
-                return false;
-            }
-        }
-
-        // Verificar se o grafo é fortemente conexo
-        return ehFortementeConexo(arestas, vertices);
-    } else {
-        // Verificação para grafos não direcionados
-        map<string, int> grauVertices;
-        for (const auto& aresta : arestas) {
-            grauVertices[aresta.origem]++;
-            grauVertices[aresta.destino]++;
-        }
-
-        // Verificar se todos os vértices têm grau par
-        for (const auto& vertice : vertices) {
-            if (grauVertices[vertice] % 2 != 0) {
-                cout << "O vértice " << vertice << " tem grau ímpar." << endl;
-                return false;
-            }
-        }
-
-        // Verificar se o grafo é conexo
-        return ehConexo(arestas, vertices);
+int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    map<string, vector<string>> adjacencia;
+    for (const auto &aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        adjacencia[aresta.destino].push_back(aresta.origem);
     }
+
+    set<string> visitados;
+    int componentesConexas = 0;
+
+    for (const auto &vertice : vertices) {
+        if (visitados.find(vertice) == visitados.end()) {
+            dfs(vertice, adjacencia, visitados);
+            componentesConexas++;
+        }
+    }
+
+    return componentesConexas;
 }
 
 // # MENU - NAVEGAÇÕES
