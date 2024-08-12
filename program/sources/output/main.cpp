@@ -550,7 +550,7 @@ void dfs(const string &vertice, const map<string, vector<string>> &adjacencia, s
         }
     }
 }
-
+// Calcular a quantidade de componentes conexas em um grafo não-orientado. 
 int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string> &vertices) {
     map<string, vector<string>> adjacencia;
     for (const auto &aresta : arestas) {
@@ -571,6 +571,63 @@ int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string>
     return componentesConexas;
 }
 
+// Função auxiliar para realizar a DFS e encontrar os componentes fortemente conexos
+void tarjanDFS(const string &vertice, map<string, vector<string>> &adjacencia,
+               map<string, int> &indices, map<string, int> &baixos,
+               stack<string> &pilha, set<string> &naPilha,
+               vector<vector<string>> &componentes, int &index) {
+    indices[vertice] = baixos[vertice] = index++;
+    pilha.push(vertice);
+    naPilha.insert(vertice);
+
+    // Explora os vizinhos
+    for (const auto &vizinho : adjacencia[vertice]) {
+        if (indices.find(vizinho) == indices.end()) {
+            // Vizinho ainda não visitado
+            tarjanDFS(vizinho, adjacencia, indices, baixos, pilha, naPilha, componentes, index);
+            baixos[vertice] = min(baixos[vertice], baixos[vizinho]);
+        } else if (naPilha.find(vizinho) != naPilha.end()) {
+            // Vizinho está na pilha, portanto é parte do componente atual
+            baixos[vertice] = min(baixos[vertice], indices[vizinho]);
+        }
+    }
+
+    // Verifica se o vértice é um ponto de raiz
+    if (baixos[vertice] == indices[vertice]) {
+        vector<string> componente;
+        string v;
+        do {
+            v = pilha.top();
+            pilha.pop();
+            naPilha.erase(v);
+            componente.push_back(v);
+        } while (v != vertice);
+        componentes.push_back(componente);
+    }
+}
+
+// Função para calcular a quantidade de componentes fortemente conexos usando o algoritmo de Tarjan
+int contarComponentesFortementeConexas(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    map<string, vector<string>> adjacencia;
+    for (const auto &aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+    }
+
+    map<string, int> indices;
+    map<string, int> baixos;
+    stack<string> pilha;
+    set<string> naPilha;
+    vector<vector<string>> componentes;
+    int index = 0;
+
+    for (const auto &vertice : vertices) {
+        if (indices.find(vertice) == indices.end()) {
+            tarjanDFS(vertice, adjacencia, indices, baixos, pilha, naPilha, componentes, index);
+        }
+    }
+
+    return componentes.size(); // Retorna a quantidade de componentes fortemente conexos
+}
 // # MENU - NAVEGAÇÕES
 void navegacaoPaginaInicial(int value)
 {
@@ -678,7 +735,27 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
     }
     else if (value == 2)
     {
-        menuListagem();
+        switch (valueSubMenu)
+        {
+        case 1: //quantidade de componentes conexas em um grafo não-orientado.   
+            cout << endl
+                 << "--- Verificacao - Quantidade componentes conexas ---" << endl;
+
+             int numComponentes = contarComponentesConexas(arestas, vertices);
+                cout << 
+                    "Número de componentes conexas: " << numComponentes << endl;
+            break;
+        case 2: // Verificação componentes fortemente conexos
+            cout << endl
+                 << "--- Verificacao - Quantidade componentes fortemente conexas ---" << endl;
+            int numComponentesForte = contarComponentesFortementeConexas(arestas, vertices);
+                cout << 
+                    "Número de componentes fortemente conexas: " << numComponentesForte << endl;
+            break;
+        default:
+            cout << retornoValorInvalido() << endl;
+            break;
+        }
     }
     else if (value == 3)
     {
