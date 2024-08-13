@@ -265,7 +265,11 @@ bool validacaoOpcaoSelecionada(Menu menu, int value)
 {
     bool valid = false;
 
-    if (value > qntOpcoes(menu) or value < 1)
+    if (menu == MENU_PRINCIPAL and (value > qntOpcoes(menu) or value < 1))
+    {
+        retornoValorInvalido();
+    }
+    else if (menu != MENU_PRINCIPAL and (value > qntOpcoes(menu)))
     {
         retornoValorInvalido();
     }
@@ -541,7 +545,7 @@ bool detectarCiclos(const vector<string>& vertices, const vector<Aresta>& aresta
     return false;
 }
 
-//busca em largura
+// Busca em largura
 void dfs(const string &vertice, const map<string, vector<string>> &adjacencia, set<string> &visitados) {
     visitados.insert(vertice);
 
@@ -629,6 +633,7 @@ int contarComponentesFortementeConexas(const vector<Aresta> &arestas, const vect
 
     return componentes.size(); // Retorna a quantidade de componentes fortemente conexos
 }
+
 // # MENU - NAVEGAÇÕES
 void navegacaoPaginaInicial(int value)
 {
@@ -724,7 +729,7 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
     {
         switch (valueSubMenu)
         {
-        case 1: //quantidade de componentes conexas em um grafo não-orientado.   
+        case 1: { //quantidade de componentes conexas em um grafo não-orientado.   
             cout << endl
                  << "--- Verificacao - Quantidade componentes conexas ---" << endl;
 
@@ -732,16 +737,20 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
                 cout << 
                     "Número de componentes conexas: " << numComponentes << endl;
             break;
-        /*case 2: // Verificação componentes fortemente conexos
+        }
+
+        case 2: { // Verificação componentes fortemente conexos
             cout << endl
                  << "--- Verificacao - Quantidade componentes fortemente conexas ---" << endl;
             int numComponentesForte = contarComponentesFortementeConexas(arestas, vertices);
                 cout << 
                     "Número de componentes fortemente conexas: " << numComponentesForte << endl;
             break;
+        }
+        
         default:
             cout << retornoValorInvalido() << endl;
-            break;*/
+            break;
         }
     }
     else if (value == 3)
