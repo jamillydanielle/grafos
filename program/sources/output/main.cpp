@@ -498,9 +498,9 @@ bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, 
     }
 }
 
-enum CorVertice { BRANCO, CINZA, PRETO };
+enum Cor { BRANCO, CINZA, PRETO };
 
-bool possuiCiclo(const string& vertice, map<string, vector<string>>& adjacencia, map<string, CorVertice>& cor) {
+bool dfsDetectarCiclo(const string& vertice, map<string, vector<string>>& adjacencia, map<string, Cor>& cor) {
     cor[vertice] = CINZA; // Marca o vértice como cinza (em progresso)
 
     for (const auto& vizinho : adjacencia[vertice]) {
@@ -509,7 +509,7 @@ bool possuiCiclo(const string& vertice, map<string, vector<string>>& adjacencia,
             return true;
         } else if (cor[vizinho] == BRANCO) {
             // Realiza DFS no vizinho
-            if (possuiCiclo(vizinho, adjacencia, cor)) {
+            if (dfsDetectarCiclo(vizinho, adjacencia, cor)) {
                 return true;
             }
         }
@@ -519,20 +519,20 @@ bool possuiCiclo(const string& vertice, map<string, vector<string>>& adjacencia,
     return false;
 }
 
-bool possuiMultiplosCiclos(const vector<string>& vertices, const vector<Aresta>& arestas) {
+bool detectarCiclos(const vector<string>& vertices, const vector<Aresta>& arestas) {
     map<string, vector<string>> adjacencia;
     for (const auto& aresta : arestas) {
         adjacencia[aresta.origem].push_back(aresta.destino);
     }
 
-    map<string, CorVertice> cor;
+    map<string, Cor> cor;
     for (const auto& vertice : vertices) {
-        cor[vertice] = BRANCO;
+        cor[vertice] = BRANCO; // Inicializa todos os vértices como brancos
     }
 
     for (const auto& vertice : vertices) {
         if (cor[vertice] == BRANCO) {
-            if (possuiCiclo(vertice, adjacencia, cor)) {
+            if (dfsDetectarCiclo(vertice, adjacencia, cor)) {
                 return true;
             }
         }
@@ -540,6 +540,7 @@ bool possuiMultiplosCiclos(const vector<string>& vertices, const vector<Aresta>&
 
     return false;
 }
+
 //busca em largura
 void dfs(const string &vertice, const map<string, vector<string>> &adjacencia, set<string> &visitados) {
     visitados.insert(vertice);
@@ -714,20 +715,6 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
                      << endl;
             }
             break;
-        case 4: // Verificação de ciclo
-            cout << endl
-                 << "--- Verificacao - Grafo possui ciclo? ---" << endl;
-            if (possuiCiclo(arestas, vertices, direcionado))
-            {
-                cout << "Yes" << endl
-                     << endl;
-            }
-            else
-            {
-                cout << "No" << endl
-                     << endl;
-            }
-            break;
         default:
             cout << retornoValorInvalido() << endl;
             break;
@@ -745,7 +732,7 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
                 cout << 
                     "Número de componentes conexas: " << numComponentes << endl;
             break;
-        case 2: // Verificação componentes fortemente conexos
+        /*case 2: // Verificação componentes fortemente conexos
             cout << endl
                  << "--- Verificacao - Quantidade componentes fortemente conexas ---" << endl;
             int numComponentesForte = contarComponentesFortementeConexas(arestas, vertices);
@@ -754,7 +741,7 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
             break;
         default:
             cout << retornoValorInvalido() << endl;
-            break;
+            break;*/
         }
     }
     else if (value == 3)
