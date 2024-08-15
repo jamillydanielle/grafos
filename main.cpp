@@ -48,10 +48,14 @@ void boasVindas()
     cout << "Jamilly Danielle" << endl;
     cout << "--------------------------------------------" << endl;
 
-    cout << endl << "Vamos iniciar! ..." << endl << endl << endl;
+    cout << endl
+         << "Vamos iniciar! ..." << endl
+         << endl
+         << endl;
 }
 
-bool validarEntrada(const string &valor, const string &tipoValidacao){
+bool validarEntrada(const string &valor, const string &tipoValidacao)
+{
     if (tipoValidacao == "inteiro")
     {
         return regex_match(valor, regex("^[0-9]+$"));
@@ -79,15 +83,18 @@ bool validarEntrada(const string &valor, const string &tipoValidacao){
     }
 }
 
-bool validarVerticesEArestas(const string &entrada, int &numVertices, int &numArestas) {
+bool validarVerticesEArestas(const string &entrada, int &numVertices, int &numArestas)
+{
     istringstream iss(entrada);
     string strVertices, strArestas;
 
-    if (!(iss >> strVertices >> strArestas)) {
+    if (!(iss >> strVertices >> strArestas))
+    {
         return false;
     }
 
-    if (!validarEntrada(strVertices, "inteiro") or !validarEntrada(strArestas, "inteiro")) {
+    if (!validarEntrada(strVertices, "inteiro") or !validarEntrada(strArestas, "inteiro"))
+    {
         return false;
     }
 
@@ -97,19 +104,26 @@ bool validarVerticesEArestas(const string &entrada, int &numVertices, int &numAr
     return numVertices > 0 and numArestas > 0;
 }
 
-void solicitarVerticesEArestas(int &numVertices, int &numArestas) {
+void solicitarVerticesEArestas(int &numVertices, int &numArestas)
+{
     string entrada;
     bool valido = false;
 
-    while (!valido) {
-        cout << endl << retornoInsiraValor();
+    while (!valido)
+    {
+        cout << endl
+             << retornoInsiraValor();
 
         getline(cin, entrada);
 
-        if (validarVerticesEArestas(entrada, numVertices, numArestas)) {
+        if (validarVerticesEArestas(entrada, numVertices, numArestas))
+        {
             valido = true;
-        } else {
-            cout << endl << retornoValorInvalido() << endl;
+        }
+        else
+        {
+            cout << endl
+                 << retornoValorInvalido() << endl;
         }
     }
 }
@@ -121,7 +135,8 @@ string solicitarValor(const string &tipoValidacao)
 
     while (!valido)
     {
-        cout << endl << retornoInsiraValor();
+        cout << endl
+             << retornoInsiraValor();
         cin >> valor;
 
         if (validarEntrada(valor, tipoValidacao))
@@ -130,23 +145,26 @@ string solicitarValor(const string &tipoValidacao)
         }
         else
         {
-            cout << endl << retornoValorInvalido() << endl;
+            cout << endl
+                 << retornoValorInvalido() << endl;
         }
     }
 
     return valor;
 }
 
-bool validarAresta(const string& input) {
+bool validarAresta(const string &input)
+{
     istringstream value(input);
     string u, v;
     int id;
     float p;
 
-    value >> id  >> u >> v >> p;
+    value >> id >> u >> v >> p;
 
     // Verifica se a leitura das variáveis foi bem-sucedida
-    if (value.fail() or !value.eof()) {
+    if (value.fail() or !value.eof())
+    {
         return false;
     }
 
@@ -157,14 +175,16 @@ bool validarAresta(const string& input) {
            validarEntrada(v, "caractereAlfanumerico");
 }
 
-void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numArestas) {
-    for (int i = 0; i < numArestas; ++i) {
+void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numArestas)
+{
+    for (int i = 0; i < numArestas; ++i)
+    {
         string input;
         bool valido = false;
 
         while (!valido)
         {
-            cout << "> " << i + 1 << "/" << numArestas << ": "; //#TODO - Tratar exibição de primeira leitura, onde aparece 1/n - já exibindo que o valor não está válido sem nem ter preenchido nada
+            cout << "> " << i + 1 << "/" << numArestas << ": "; // #TODO: Tratar exibição de primeira leitura, onde aparece 1/n - já exibindo que o valor não está válido sem nem ter preenchido nada
             getline(cin, input);
 
             if (validarAresta(input))
@@ -173,7 +193,9 @@ void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numAre
             }
             else
             {
-                cout << endl << retornoValorInvalido() << endl << endl;
+                cout << endl
+                     << retornoValorInvalido() << endl
+                     << endl;
             }
         }
 
@@ -185,10 +207,12 @@ void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numAre
 
         arestas.push_back(Aresta{id, u, v, static_cast<int>(p)});
 
-        if (find(vertices.begin(), vertices.end(), u) == vertices.end()) {
+        if (find(vertices.begin(), vertices.end(), u) == vertices.end())
+        {
             vertices.push_back(u);
         }
-        if (find(vertices.begin(), vertices.end(), v) == vertices.end()) {
+        if (find(vertices.begin(), vertices.end(), v) == vertices.end())
+        {
             vertices.push_back(v);
         }
     }
@@ -199,18 +223,22 @@ void leituraGrafo()
     int numVertices, numArestas;
     string tipoGrafo;
 
-    cout << "[ Qtd. Vertices e Arestas ]" << endl << endl;
+    cout << "[ Qtd. Vertices e Arestas ]" << endl
+         << endl;
     cout << "* Insira a qtd. de Vertices e Arestas" << endl;
-    
+
     solicitarVerticesEArestas(numVertices, numArestas);
 
     vector<Aresta> arestas(numArestas);
     vector<string> vertices(numVertices);
 
-    cout << endl << endl;
+    cout << endl
+         << endl;
 
-    cout << "[ Tipo Grafo ]" << endl << endl;
-    cout << "* Selecione o Num. da opcao desejada:" << endl << endl;
+    cout << "[ Tipo Grafo ]" << endl
+         << endl;
+    cout << "* Selecione o Num. da opcao desejada:" << endl
+         << endl;
     cout << "--------------------------------------------" << endl;
     cout << "Valor               |   Tipo" << endl;
     cout << "--------------------------------------------" << endl;
@@ -219,13 +247,16 @@ void leituraGrafo()
     cout << "--------------------------------------------" << endl;
     tipoGrafo = solicitarValor("tipoGrafo");
 
-    cout << endl << endl;
+    cout << endl
+         << endl;
 
-    cout << "[ Config. Arestas ]" << endl << endl;
-    cout << "* Insira as arestas no formato: id_aresta u v p\n" << "--- Ex.: 0 a b 5 ---" << endl;
-    cout << "--------------------------------------------" << endl << endl;
+    cout << "[ Config. Arestas ]" << endl
+         << endl;
+    cout << "* Insira as arestas no formato: id_aresta u v p\n"
+         << "--- Ex.: 0 a b 5 ---" << endl;
+    cout << "--------------------------------------------" << endl
+         << endl;
     insiraArestas(arestas, vertices, numArestas);
-
 }
 
 // # MENU - LISTAGEM DE OPÇÕES
@@ -314,7 +345,8 @@ void menuVerificacao()
     cout << "4    |   cod. ref.: 4. |   Possui ciclo" << endl;
     cout << "--------------------------------" << endl
          << endl;
-    retornoPaginaInicial();
+    cout << retornoPaginaInicial() << endl
+         << endl;
 }
 
 void menuListagem()
@@ -335,7 +367,8 @@ void menuListagem()
     cout << "6    |   cod. ref.: 10. |   Arestas ponte" << endl;
     cout << "--------------------------------" << endl
          << endl;
-    retornoPaginaInicial();
+    cout << retornoPaginaInicial() << endl
+         << endl;
 }
 
 void menuConfiguracoes()
@@ -357,7 +390,8 @@ void menuConfiguracoes()
     cout << "7    |   cod. ref.: 17. |   Fechamento transitivo" << endl;
     cout << "--------------------------------" << endl
          << endl;
-    retornoPaginaInicial();
+    cout << retornoPaginaInicial() << endl
+         << endl;
 }
 
 // # MENU - VERIFICAÇÕES
@@ -502,18 +536,29 @@ bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, 
     }
 }
 
-enum Cor { BRANCO, CINZA, PRETO };
+enum Cor
+{
+    BRANCO,
+    CINZA,
+    PRETO
+};
 
-bool dfsDetectarCiclo(const string& vertice, map<string, vector<string>>& adjacencia, map<string, Cor>& cor) {
+bool dfsDetectarCiclo(const string &vertice, map<string, vector<string>> &adjacencia, map<string, Cor> &cor)
+{
     cor[vertice] = CINZA; // Marca o vértice como cinza (em progresso)
 
-    for (const auto& vizinho : adjacencia[vertice]) {
-        if (cor[vizinho] == CINZA) {
+    for (const auto &vizinho : adjacencia[vertice])
+    {
+        if (cor[vizinho] == CINZA)
+        {
             // Encontrou um ciclo (vértice cinza no caminho atual)
             return true;
-        } else if (cor[vizinho] == BRANCO) {
+        }
+        else if (cor[vizinho] == BRANCO)
+        {
             // Realiza DFS no vizinho
-            if (dfsDetectarCiclo(vizinho, adjacencia, cor)) {
+            if (dfsDetectarCiclo(vizinho, adjacencia, cor))
+            {
                 return true;
             }
         }
@@ -523,20 +568,26 @@ bool dfsDetectarCiclo(const string& vertice, map<string, vector<string>>& adjace
     return false;
 }
 
-bool detectarCiclos(const vector<string>& vertices, const vector<Aresta>& arestas) {
+bool detectarCiclos(const vector<string> &vertices, const vector<Aresta> &arestas)
+{
     map<string, vector<string>> adjacencia;
-    for (const auto& aresta : arestas) {
+    for (const auto &aresta : arestas)
+    {
         adjacencia[aresta.origem].push_back(aresta.destino);
     }
 
     map<string, Cor> cor;
-    for (const auto& vertice : vertices) {
+    for (const auto &vertice : vertices)
+    {
         cor[vertice] = BRANCO; // Inicializa todos os vértices como brancos
     }
 
-    for (const auto& vertice : vertices) {
-        if (cor[vertice] == BRANCO) {
-            if (dfsDetectarCiclo(vertice, adjacencia, cor)) {
+    for (const auto &vertice : vertices)
+    {
+        if (cor[vertice] == BRANCO)
+        {
+            if (dfsDetectarCiclo(vertice, adjacencia, cor))
+            {
                 return true;
             }
         }
@@ -546,19 +597,24 @@ bool detectarCiclos(const vector<string>& vertices, const vector<Aresta>& aresta
 }
 
 // Busca em largura
-void dfs(const string &vertice, const map<string, vector<string>> &adjacencia, set<string> &visitados) {
+void dfs(const string &vertice, const map<string, vector<string>> &adjacencia, set<string> &visitados)
+{
     visitados.insert(vertice);
 
-    for (const auto &vizinho : adjacencia.at(vertice)) {
-        if (visitados.find(vizinho) == visitados.end()) {
+    for (const auto &vizinho : adjacencia.at(vertice))
+    {
+        if (visitados.find(vizinho) == visitados.end())
+        {
             dfs(vizinho, adjacencia, visitados);
         }
     }
 }
-// Calcular a quantidade de componentes conexas em um grafo não-orientado. 
-int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string> &vertices) {
+// Calcular a quantidade de componentes conexas em um grafo não-orientado.
+int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string> &vertices)
+{
     map<string, vector<string>> adjacencia;
-    for (const auto &aresta : arestas) {
+    for (const auto &aresta : arestas)
+    {
         adjacencia[aresta.origem].push_back(aresta.destino);
         adjacencia[aresta.destino].push_back(aresta.origem);
     }
@@ -566,8 +622,10 @@ int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string>
     set<string> visitados;
     int componentesConexas = 0;
 
-    for (const auto &vertice : vertices) {
-        if (visitados.find(vertice) == visitados.end()) {
+    for (const auto &vertice : vertices)
+    {
+        if (visitados.find(vertice) == visitados.end())
+        {
             dfs(vertice, adjacencia, visitados);
             componentesConexas++;
         }
@@ -580,28 +638,35 @@ int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string>
 void tarjanDFS(const string &vertice, map<string, vector<string>> &adjacencia,
                map<string, int> &indices, map<string, int> &baixos,
                stack<string> &pilha, set<string> &naPilha,
-               vector<vector<string>> &componentes, int &index) {
+               vector<vector<string>> &componentes, int &index)
+{
     indices[vertice] = baixos[vertice] = index++;
     pilha.push(vertice);
     naPilha.insert(vertice);
 
     // Explora os vizinhos
-    for (const auto &vizinho : adjacencia[vertice]) {
-        if (indices.find(vizinho) == indices.end()) {
+    for (const auto &vizinho : adjacencia[vertice])
+    {
+        if (indices.find(vizinho) == indices.end())
+        {
             // Vizinho ainda não visitado
             tarjanDFS(vizinho, adjacencia, indices, baixos, pilha, naPilha, componentes, index);
             baixos[vertice] = min(baixos[vertice], baixos[vizinho]);
-        } else if (naPilha.find(vizinho) != naPilha.end()) {
+        }
+        else if (naPilha.find(vizinho) != naPilha.end())
+        {
             // Vizinho está na pilha, portanto é parte do componente atual
             baixos[vertice] = min(baixos[vertice], indices[vizinho]);
         }
     }
 
     // Verifica se o vértice é um ponto de raiz
-    if (baixos[vertice] == indices[vertice]) {
+    if (baixos[vertice] == indices[vertice])
+    {
         vector<string> componente;
         string v;
-        do {
+        do
+        {
             v = pilha.top();
             pilha.pop();
             naPilha.erase(v);
@@ -612,9 +677,11 @@ void tarjanDFS(const string &vertice, map<string, vector<string>> &adjacencia,
 }
 
 // Função para calcular a quantidade de componentes fortemente conexos usando o algoritmo de Tarjan
-int contarComponentesFortementeConexas(const vector<Aresta> &arestas, const vector<string> &vertices) {
+int contarComponentesFortementeConexas(const vector<Aresta> &arestas, const vector<string> &vertices)
+{
     map<string, vector<string>> adjacencia;
-    for (const auto &aresta : arestas) {
+    for (const auto &aresta : arestas)
+    {
         adjacencia[aresta.origem].push_back(aresta.destino);
     }
 
@@ -625,8 +692,10 @@ int contarComponentesFortementeConexas(const vector<Aresta> &arestas, const vect
     vector<vector<string>> componentes;
     int index = 0;
 
-    for (const auto &vertice : vertices) {
-        if (indices.find(vertice) == indices.end()) {
+    for (const auto &vertice : vertices)
+    {
+        if (indices.find(vertice) == indices.end())
+        {
             tarjanDFS(vertice, adjacencia, indices, baixos, pilha, naPilha, componentes, index);
         }
     }
@@ -635,28 +704,227 @@ int contarComponentesFortementeConexas(const vector<Aresta> &arestas, const vect
 }
 
 // # MENU - NAVEGAÇÕES
-void navegacaoPaginaInicial(int value)
-{
 
-    if (value == 1)
+void navegacaoPaginaInicial(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado);
+
+void menuVerificacao(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+{
+    int valueSubMenu;
+    menuVerificacao();
+    cout << retornoInsiraValor();
+    cin >> valueSubMenu;
+
+    switch (valueSubMenu)
     {
-        menuVerificacao();
-    }
-    else if (value == 2)
-    {
-        menuListagem();
-    }
-    else if (value == 3)
-    {
-        menuConfiguracoes();
+    case 0:
+        menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+        cout << retornoInsiraValor();
+        int value;
+        cin >> value;
+        cin.ignore();
+        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
+        break;
+    case 1: // Verificação de grafo conexo
+        cout << endl
+             << "--- Verificacao - Grafo conexo? ---" << endl;
+        if (ehConexo(arestas, vertices))
+        {
+            cout << "Sim" << endl
+                 << endl;
+        }
+        else
+        {
+            cout << "Nao" << endl
+                 << endl;
+        }
+        menuVerificacao(arestas, vertices, direcionado);
+        break;
+    case 2: // Verificação bipartida
+        cout << endl
+             << "--- Verificacao - Grafo bipartido? ---" << endl;
+        if (ehBipartido(arestas, vertices))
+        {
+            cout << "Sim" << endl
+                 << endl;
+        }
+        else
+        {
+            cout << "Nao" << endl
+                 << endl;
+        }
+        menuVerificacao(arestas, vertices, direcionado);
+        break;
+    case 3: // Verificação Euleriano
+        cout << endl
+             << "--- Verificacao - Grafo Euleriano? ---" << endl;
+        if (ehEuleriano(arestas, vertices, direcionado))
+        {
+            cout << "Sim" << endl
+                 << endl;
+        }
+        else
+        {
+            cout << "Nao" << endl
+                 << endl;
+        }
+        menuVerificacao(arestas, vertices, direcionado);
+        break;
+    case 4: // Verificação de ciclo
+        cout << endl
+             << "--- Verificacao - O grafo possui ciclo? ---" << endl;
+        if (detectarCiclos(vertices, arestas))
+        {
+            cout << "Sim" << endl
+                 << endl;
+        }
+        else
+        {
+            cout << "Nao" << endl
+                 << endl;
+        }
+        menuVerificacao(arestas, vertices, direcionado);
+        break;
+    default:
+        cout << retornoValorInvalido() << endl;
+        break;
     }
 }
 
-bool acessoSubPaginas(int value)
+void menuListagem(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
-    if (validacaoOpcaoSelecionada(MENU_PRINCIPAL, value) == true)
+    int valueSubMenu;
+    menuListagem();
+    cout << retornoInsiraValor();
+    cin >> valueSubMenu;
+
+    switch (valueSubMenu)
     {
-        navegacaoPaginaInicial(value);
+    case 0:
+        menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+        cout << retornoInsiraValor();
+        int value;
+        cin >> value;
+        cin.ignore();
+        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
+        break;
+    case 1: // Componentes conexas
+        cout << endl
+             << "--- Listagem - Componentes Conexas ---" << endl;
+        cout << "Qtd. de componentes conexas: " << contarComponentesConexas(arestas, vertices) << endl;
+        break;
+    case 2: // Componentes fortemente conexas
+        cout << endl
+             << "--- Listagem - Componentes Fortemente Conexos ---" << endl;
+        cout << "Qtd. de componentes fortemente conexos: " << contarComponentesFortementeConexas(arestas, vertices) << endl;
+        break;
+    case 3: // Caminho Euleriano
+        cout << endl
+             << "--- Listagem - Caminho Euleriano ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 4: // Caminho Hamiltoniano
+        cout << endl
+             << "--- Listagem - Caminho Hamiltoniano ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 5: // Vértices de articulação
+        cout << endl
+             << "--- Listagem - Vértices de Articulação ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 6: // Arestas ponte
+        cout << endl
+             << "--- Listagem - Arestas Ponte ---" << endl;
+        // #TODO: Implementar
+        break;
+    default:
+        cout << retornoValorInvalido() << endl;
+        break;
+    }
+}
+
+void menuConfiguracoes(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+{
+    int valueSubMenu;
+    menuConfiguracoes();
+    cout << retornoInsiraValor();
+    cin >> valueSubMenu;
+
+    switch (valueSubMenu)
+    {
+    case 0:
+        menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+        cout << retornoInsiraValor();
+        int value;
+        cin >> value;
+        cin.ignore();
+        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
+        break;
+    case 1: // Árvore de profundidade
+        cout << endl
+             << "--- Configuração - Árvore de Profundidade ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 2: // Árvore de largura
+        cout << endl
+             << "--- Configuração - Árvore de Largura ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 3: // Árvore geradora mínima
+        cout << endl
+             << "--- Configuração - Árvore Geradora Mínima ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 4: // Ordem topológica
+        cout << endl
+             << "--- Configuração - Ordem Topológica ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 5: // Caminho mínimo entre dois vértices
+        cout << endl
+             << "--- Configuração - Caminho Mínimo Entre Dois Vértices ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 6: // Fluxo máximo
+        cout << endl
+             << "--- Configuração - Fluxo Máximo ---" << endl;
+        // #TODO: Implementar
+        break;
+    case 7: // Fechamento transitivo
+        cout << endl
+             << "--- Configuração - Fechamento Transitivo ---" << endl;
+        // #TODO: Implementar
+        break;
+    default:
+        cout << retornoValorInvalido() << endl;
+        break;
+    }
+}
+
+void navegacaoPaginaInicial(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+{
+    switch (value)
+    {
+    case 1: // Verificação
+        menuVerificacao(arestas, vertices, direcionado);
+        break;
+    case 2: // Listagem
+        menuListagem(arestas, vertices, direcionado);
+        break;
+    case 3: // Configuração
+        menuConfiguracoes(arestas, vertices, direcionado);
+        break;
+    default:
+        cout << retornoValorInvalido() << endl;
+        break;
+    }
+}
+
+bool acessoSubPaginas(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+{
+    if (validacaoOpcaoSelecionada(MENU_PRINCIPAL, value))
+    {
+        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
         cout << retornoPaginaInicial() << endl
              << endl;
         return true;
@@ -669,98 +937,8 @@ bool acessoSubPaginas(int value)
     }
 }
 
-void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
-{
-    int valueSubMenu = value;
-
-    if (value == 1)
-    {
-
-        switch (valueSubMenu)
-        {
-        case 1: // Verificação de grafo conexo
-            cout << endl
-                 << "--- Verificacao - Grafo conexo? ---" << endl;
-            if (ehConexo(arestas, vertices))
-            {
-                cout << "Yes" << endl
-                     << endl;
-            }
-            else
-            {
-                cout << "No" << endl
-                     << endl;
-            }
-            break;
-        case 2: // Verificação de grafo bipartido
-            cout << endl
-                 << "--- Verificacao - Grafo bipartido? ---" << endl;
-            if (ehBipartido(arestas, vertices))
-            {
-                cout << "Yes" << endl
-                     << endl;
-            }
-            else
-            {
-                cout << "No" << endl
-                     << endl;
-            }
-            break;
-        case 3: // Verificação de grafo euleriano
-            cout << endl
-                 << "--- Verificacao - Grafo eureliano? ---" << endl;
-            if (ehEuleriano(arestas, vertices, direcionado))
-            {
-                cout << "Yes" << endl
-                     << endl;
-            }
-            else
-            {
-                cout << "No" << endl
-                     << endl;
-            }
-            break;
-        default:
-            cout << retornoValorInvalido() << endl;
-            break;
-        }
-    }
-    else if (value == 2)
-    {
-        switch (valueSubMenu)
-        {
-        case 1: { //quantidade de componentes conexas em um grafo não-orientado.   
-            cout << endl
-                 << "--- Verificacao - Quantidade componentes conexas ---" << endl;
-
-             int numComponentes = contarComponentesConexas(arestas, vertices);
-                cout << 
-                    "Número de componentes conexas: " << numComponentes << endl;
-            break;
-        }
-
-        case 2: { // Verificação componentes fortemente conexos
-            cout << endl
-                 << "--- Verificacao - Quantidade componentes fortemente conexas ---" << endl;
-            int numComponentesForte = contarComponentesFortementeConexas(arestas, vertices);
-                cout << 
-                    "Número de componentes fortemente conexas: " << numComponentesForte << endl;
-            break;
-        }
-        
-        default:
-            cout << retornoValorInvalido() << endl;
-            break;
-        }
-    }
-    else if (value == 3)
-    {
-        menuConfiguracoes();
-    }
-}
-
 // # MENU - EXECUÇÃO
-void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não funciona corretamente
+void executarMenu() // #TODO: Corrigir execução - na segunda consulta, não funciona corretamente
 {
     int value;
     int optionsEndProgram;
@@ -772,14 +950,14 @@ void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não f
     boasVindas();
     leituraGrafo();
 
-    menuPrincipal(); // #TODO - Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+    menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
     cout << retornoInsiraValor();
     cin >> value;
     cin.ignore();
 
     while (encerrarPrograma == false)
     {
-        if (acessoSubPaginas(value) == true) // #TODO - No submenu, ao inserir valor inválido, entra em loop
+        if (acessoSubPaginas(value, arestas, vertices, direcionado) == true) // #TODO: No submenu, ao inserir valor inválido, entra em loop
         {
 
             cout << retornoInsiraValor();
@@ -792,7 +970,7 @@ void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não f
             }
             else
             {
-                navegacaoSubPaginas(value, arestas, vertices, direcionado); // #TODO - No submenu, ao inserir para voltar para a página inicial, o programa reinicia ao invés de voltar para o menu inicial de grafos
+                navegacaoPaginaInicial(value, arestas, vertices, direcionado); // #TODO: No submenu, ao inserir para voltar para a página inicial, o programa reinicia ao invés de voltar para o menu inicial de grafos
             }
         }
         else
@@ -801,13 +979,16 @@ void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não f
         }
 
         cout << "Deseja realizar uma nova analise? 1 - Sim | 2 - Nao" << endl;
-        cout << endl << retornoInsiraValor();
+        cout << endl
+             << retornoInsiraValor();
         cin >> optionsEndProgram;
         cin.ignore();
 
-        cout << endl << endl;
+        cout << endl
+             << endl;
 
-        if(optionsEndProgram == 2){
+        if (optionsEndProgram == 2)
+        {
             cout << "Programa finalizado! Ate mais!";
             encerrarPrograma = true;
         }
