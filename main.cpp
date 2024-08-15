@@ -323,12 +323,10 @@ void menuListagem()
     cout << "--------------------------------" << endl;
     cout << "Num. |   Tipo de listagem" << endl;
     cout << "--------------------------------" << endl;
-    cout << "1    |   cod. ref.: 5. |   Componentes conexas" << endl;
-    cout << "2    |   cod. ref.: 6. |   Componentes fortemente conexas" << endl;
-    cout << "3    |   cod. ref.: 7. |   Um caminho Euleriano" << endl;    // Priorizando a ordem lexicográfica dos vértices
-    cout << "4    |   cod. ref.: 8. |   Um caminho Hamiltoniano" << endl; // (priorizando a ordem lexicográfica dos vértices
-    cout << "5    |   cod. ref.: 9. |   Vertices de articulacao" << endl;
-    cout << "6    |   cod. ref.: 10. |   Arestas ponte" << endl;
+    cout << "1    |   cod. ref.: 5. |   Quantidade de Componentes conexas" << endl;
+    cout << "2    |   cod. ref.: 6. |   Quantidade de Componentes fortemente conexas" << endl;
+    cout << "3    |   cod. ref.: 7. |   Vertices de Articulacao" << endl;   
+    cout << "4    |   cod. ref.: 8. |   Quantidade de Arestas Ponte" << endl;
     cout << "--------------------------------" << endl
          << endl;
     retornoPaginaInicial();
@@ -358,281 +356,723 @@ void menuConfiguracoes()
 
 // # MENU - VERIFICAÇÕES
 
-bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
-{
+//1. Verificar se um grafo é conexo (para o caso de grafos orientados, verificar conectividade fraca.)  
+
+// Função para verificar se um grafo é conexo
+// Retorna true se o grafo for conexo, false caso contrário
+bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    // Cria um mapa de adjacência para representar o grafo
     map<string, vector<string>> adjacencia;
-    for (const auto &aresta : arestas)
-    {
+    for (const auto &aresta : arestas) {
         adjacencia[aresta.origem].push_back(aresta.destino);
-        adjacencia[aresta.destino].push_back(aresta.origem);
+        adjacencia[aresta.destino].push_back(aresta.origem); // Adiciona a aresta na direção oposta para grafos não direcionados
     }
 
+    if (vertices.empty()) {
+        return true; // Um grafo vazio é considerado conexo por definição
+    }
+
+    set<string> visitados; // Conjunto para rastrear vértices visitados
+    queue<string> fila;    // Fila para realizar a busca em largura (BFS)
+
+    // Inicia a BFS com o primeiro vértice da lista
+    fila.push(vertices[0]);
+    visitados.insert(vertices[0]);
+
+    while (!fila.empty()) {
+        string u = fila.front();
+        fila.pop();
+
+        // Explora todos os vizinhos do vértice atual
+        for (const auto &v : adjacencia[u]) {
+            if (visitados.find(v) == visitados.end()) {
+                visitados.insert(v);
+                fila.push(v); // Adiciona o vizinho à fila para explorar posteriormente
+            }
+        }
+    }
+
+    // Verifica se todos os vértices foram visitados
+    for (const auto &vertice : vertices) {
+        if (visitados.find(vertice) == visitados.end()) {
+            return false; // Se algum vértice não foi visitado, o grafo é desconexo
+        }
+    }
+
+    return true; // Todos os vértices foram visitados, então o grafo é conexo
+}
+
+//2. Verificar se um grafo não-orientado é bipartido.
+
+// Função para verificar se um grafo é bipartido
+// Retorna true se o grafo for bipartido, false caso contrário
+bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    // Cria um mapa de adjacência para representar o grafo
+    map<string, vector<string>> adjacencia;
+    for (const auto &aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        adjacencia[aresta.destino].push_back(aresta.origem); // Adiciona a aresta na direção oposta para grafos não direcionados
+    }
+
+    // Mapa para armazenar a cor de cada vértice (-1 indica que o vértice não foi colorido)
     map<string, int> cor;
-    for (const auto &vertice : vertices)
-    {
-        cor[vertice] = -1; // -1 indica que o vértice não foi colorido ainda
+    for (const auto &vertice : vertices) {
+        cor[vertice] = -1;
     }
 
-    for (const auto &vertice : vertices)
-    {
-        if (cor[vertice] == -1)
-        { // Vértice não colorido
+    // Verifica todos os vértices (pode haver múltiplos componentes conectados)
+    for (const auto &vertice : vertices) {
+        if (cor[vertice] == -1) { // Se o vértice não foi colorido
             queue<string> fila;
             fila.push(vertice);
             cor[vertice] = 0; // Começa colorindo o vértice inicial com a cor 0
 
-            while (!fila.empty())
-            {
+            // Realiza a busca em largura (BFS)
+            while (!fila.empty()) {
                 string u = fila.front();
                 fila.pop();
 
-                for (const auto &v : adjacencia[u])
-                {
-                    if (cor[v] == -1)
-                    {                        // Se o vértice adjacente não foi colorido
-                        cor[v] = 1 - cor[u]; // Colore com a cor oposta
+                // Explora todos os vizinhos do vértice atual
+                for (const auto &v : adjacencia[u]) {
+                    if (cor[v] == -1) { // Se o vizinho não foi colorido
+                        cor[v] = 1 - cor[u]; // Colore com a cor oposta à de u
                         fila.push(v);
-                    }
-                    else if (cor[v] == cor[u])
-                    { // Se o vértice adjacente tem a mesma cor
-                        return false;
+                    } else if (cor[v] == cor[u]) { // Se o vizinho tem a mesma cor que u
+                        return false; // O grafo não é bipartido
                     }
                 }
             }
         }
     }
 
-    return true;
+    return true; // Todos os vértices foram coloridos corretamente, o grafo é bipartido
 }
 
-bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices)
-{
-    map<string, vector<string>> adjacencia;
-    for (const auto &aresta : arestas)
-    {
-        adjacencia[aresta.origem].push_back(aresta.destino);
-        adjacencia[aresta.destino].push_back(aresta.origem);
+//3. Verificar se um grafo qualquer é Euleriano. 
+
+// Função para verificar se um grafo é euleriano
+// O grafo pode ser direcionado ou não direcionado
+bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado) {
+    // Verifica se o grafo é conexo
+    if (!ehConexo(arestas, vertices)) {
+        return false; // O grafo deve ser conexo para ser euleriano
     }
 
-    if (vertices.empty())
-        return true; // Grafo vazio é considerado conexo
-
-    set<string> visitados;
-    queue<string> fila;
-    fila.push(vertices[0]); // Começa com o primeiro vértice
-    visitados.insert(vertices[0]);
-
-    while (!fila.empty())
-    {
-        string u = fila.front();
-        fila.pop();
-
-        for (const auto &v : adjacencia[u])
-        {
-            if (visitados.find(v) == visitados.end())
-            {
-                visitados.insert(v);
-                fila.push(v);
-            }
-        }
-    }
-
-    // Verifica se todos os vértices foram visitados
-    for (const auto &vertice : vertices)
-    {
-        if (visitados.find(vertice) == visitados.end())
-        {
-            return false; // Algum vértice não foi visitado, logo o grafo é desconexo
-        }
-    }
-
-    return true; // Todos os vértices foram visitados, logo o grafo é conexo
-}
-
-bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
-{
-    if (direcionado)
-    {
+    if (direcionado) {
         // Verificação para grafos direcionados
-        map<string, int> grauEntrada;
-        map<string, int> grauSaida;
-        for (const auto &aresta : arestas)
-        {
-            grauSaida[aresta.origem]++;
-            grauEntrada[aresta.destino]++;
+        map<string, int> grauEntrada; // Armazena o grau de entrada para cada vértice
+        map<string, int> grauSaida;   // Armazena o grau de saída para cada vértice
+
+        // Calcula o grau de entrada e saída para cada vértice
+        for (const auto &aresta : arestas) {
+            grauSaida[aresta.origem]++;  // Aumenta o grau de saída do vértice de origem
+            grauEntrada[aresta.destino]++; // Aumenta o grau de entrada do vértice de destino
         }
 
-        // Verificar se todos os vértices têm grau de entrada igual ao grau de saída
-        for (const auto &vertice : vertices)
-        {
-            if (grauEntrada[vertice] != grauSaida[vertice])
-            {
+        // Verifica se todos os vértices têm grau de entrada igual ao grau de saída
+        for (const auto &vertice : vertices) {
+            if (grauEntrada[vertice] != grauSaida[vertice]) {
                 cout << "O vértice " << vertice << " não tem grau de entrada igual ao grau de saída." << endl;
-                return false;
+                return false; // Se algum vértice não satisfaz a condição, o grafo não é euleriano
             }
         }
 
-        return true;
-    }
-    else
-    {
+        return true; // Se todas as condições foram satisfeitas, o grafo é euleriano
+    } else {
         // Verificação para grafos não direcionados
-        map<string, int> grauVertices;
-        for (const auto &aresta : arestas)
-        {
-            grauVertices[aresta.origem]++;
-            grauVertices[aresta.destino]++;
+        map<string, int> grauVertices; // Armazena o grau para cada vértice
+
+        // Calcula o grau para cada vértice
+        for (const auto &aresta : arestas) {
+            grauVertices[aresta.origem]++;  // Aumenta o grau do vértice de origem
+            grauVertices[aresta.destino]++; // Aumenta o grau do vértice de destino
         }
 
-        // Verificar se todos os vértices têm grau par
-        for (const auto &vertice : vertices)
-        {
-            if (grauVertices[vertice] % 2 != 0)
-            {
+        // Verifica se todos os vértices têm grau par
+        for (const auto &vertice : vertices) {
+            if (grauVertices[vertice] % 2 != 0) {
                 cout << "O vértice " << vertice << " tem grau ímpar." << endl;
-                return false;
+                return false; // Se algum vértice tem grau ímpar, o grafo não é euleriano
             }
         }
 
-        return true;
+        return true; // Se todas as condições foram satisfeitas, o grafo é euleriano
     }
 }
 
 enum Cor { BRANCO, CINZA, PRETO };
 
+//4. Verificar se um grafo possui ciclo.   
+
+// Função auxiliar para detectar ciclos em um grafo não-orientado usando DFS
 bool dfsDetectarCiclo(const string& vertice, map<string, vector<string>>& adjacencia, map<string, Cor>& cor) {
     cor[vertice] = CINZA; // Marca o vértice como cinza (em progresso)
 
+    // Itera sobre todos os vizinhos do vértice atual
     for (const auto& vizinho : adjacencia[vertice]) {
         if (cor[vizinho] == CINZA) {
-            // Encontrou um ciclo (vértice cinza no caminho atual)
+            // Se o vizinho está cinza, significa que já foi visitado na mesma busca DFS
+            // Portanto, encontramos um ciclo
             return true;
         } else if (cor[vizinho] == BRANCO) {
-            // Realiza DFS no vizinho
+            // Se o vizinho está branco, ele ainda não foi visitado
+            // Realiza DFS recursivamente no vizinho
             if (dfsDetectarCiclo(vizinho, adjacencia, cor)) {
-                return true;
+                return true; // Se um ciclo for encontrado na chamada recursiva, retorna verdadeiro
             }
         }
     }
 
     cor[vertice] = PRETO; // Marca o vértice como preto (concluído)
+    // Retorna falso se nenhum ciclo for encontrado a partir deste vértice
     return false;
 }
 
+// Função para detectar ciclos em um grafo não-orientado
 bool detectarCiclos(const vector<string>& vertices, const vector<Aresta>& arestas) {
+    // Cria um mapa para armazenar a lista de adjacências do grafo
     map<string, vector<string>> adjacencia;
     for (const auto& aresta : arestas) {
         adjacencia[aresta.origem].push_back(aresta.destino);
+        adjacencia[aresta.destino].push_back(aresta.origem); // Adiciona aresta bidirecional para grafo não-orientado
     }
 
+    // Cria um mapa para armazenar a cor de cada vértice
+    // COR BRANCO indica que o vértice não foi visitado
     map<string, Cor> cor;
     for (const auto& vertice : vertices) {
         cor[vertice] = BRANCO; // Inicializa todos os vértices como brancos
     }
 
+    // Itera sobre todos os vértices para iniciar a busca em profundidade (DFS)
     for (const auto& vertice : vertices) {
+        // Se o vértice ainda não foi visitado, inicia DFS a partir dele
         if (cor[vertice] == BRANCO) {
             if (dfsDetectarCiclo(vertice, adjacencia, cor)) {
-                return true;
+                return true; // Retorna verdadeiro se um ciclo for detectado
             }
         }
     }
 
-    return false;
+    return false; // Retorna falso se nenhum ciclo for detectado
 }
 
-//busca em largura
-void dfs(const string &vertice, const map<string, vector<string>> &adjacencia, set<string> &visitados) {
+//5. Calcular a quantidade de componentes conexas em um grafo não-orientado.   
+
+// Função para realizar a busca em profundidade (DFS) em um grafo
+void dfsCompConexas(const string &vertice, const map<string, vector<string>> &adjacencia, set<string> &visitados) {
+    // Marca o vértice atual como visitado
     visitados.insert(vertice);
 
+    // Itera sobre todos os vizinhos do vértice atual
     for (const auto &vizinho : adjacencia.at(vertice)) {
+        // Se o vizinho ainda não foi visitado, realiza DFS recursiva
         if (visitados.find(vizinho) == visitados.end()) {
-            dfs(vizinho, adjacencia, visitados);
+            dfsCompConexas(vizinho, adjacencia, visitados);
         }
     }
 }
+
 // Calcular a quantidade de componentes conexas em um grafo não-orientado. 
 int contarComponentesConexas(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    // Cria um mapa para armazenar a lista de adjacências do grafo
     map<string, vector<string>> adjacencia;
+    
+    // Preenche o mapa de adjacências com base nas arestas fornecidas
     for (const auto &aresta : arestas) {
+        // Adiciona a aresta para ambos os sentidos (grafo não-orientado)
         adjacencia[aresta.origem].push_back(aresta.destino);
         adjacencia[aresta.destino].push_back(aresta.origem);
     }
 
+    // Conjunto para rastrear os vértices já visitados durante a busca
     set<string> visitados;
+    // Contador para o número de componentes conexas
     int componentesConexas = 0;
 
+    // Itera sobre todos os vértices fornecidos
     for (const auto &vertice : vertices) {
+        // Se o vértice ainda não foi visitado, inicia uma nova busca em profundidade (DFS)
         if (visitados.find(vertice) == visitados.end()) {
-            dfs(vertice, adjacencia, visitados);
+            // Executa DFS a partir do vértice atual
+            dfsCompConexas(vertice, adjacencia, visitados);
+            // Incrementa o contador de componentes conexas
             componentesConexas++;
         }
     }
 
+    // Retorna o número total de componentes conexas encontradas
     return componentesConexas;
 }
+
+//6. Calcular a quantidade de componentes fortemente conexas em um grafo orientado.   
 
 // Função auxiliar para realizar a DFS e encontrar os componentes fortemente conexos
 void tarjanDFS(const string &vertice, map<string, vector<string>> &adjacencia,
                map<string, int> &indices, map<string, int> &baixos,
                stack<string> &pilha, set<string> &naPilha,
                vector<vector<string>> &componentes, int &index) {
+    // Define o índice de descoberta e o valor mais baixo para o vértice atual
     indices[vertice] = baixos[vertice] = index++;
+    // Adiciona o vértice à pilha de execução e marca como presente na pilha
     pilha.push(vertice);
     naPilha.insert(vertice);
 
-    // Explora os vizinhos
+    // Itera sobre todos os vizinhos do vértice
     for (const auto &vizinho : adjacencia[vertice]) {
         if (indices.find(vizinho) == indices.end()) {
-            // Vizinho ainda não visitado
+            // Se o vizinho não foi visitado, realiza DFS recursiva
             tarjanDFS(vizinho, adjacencia, indices, baixos, pilha, naPilha, componentes, index);
+            // Atualiza o valor mais baixo do vértice atual com base no valor mais baixo do vizinho
             baixos[vertice] = min(baixos[vertice], baixos[vizinho]);
         } else if (naPilha.find(vizinho) != naPilha.end()) {
-            // Vizinho está na pilha, portanto é parte do componente atual
+            // Se o vizinho está na pilha, ele é parte do componente atual
             baixos[vertice] = min(baixos[vertice], indices[vizinho]);
         }
     }
 
-    // Verifica se o vértice é um ponto de raiz
+    // Verifica se o vértice é um ponto de raiz (início de um componente fortemente conexo)
     if (baixos[vertice] == indices[vertice]) {
         vector<string> componente;
         string v;
+        // Desempilha vértices até encontrar o vértice atual
         do {
             v = pilha.top();
             pilha.pop();
             naPilha.erase(v);
             componente.push_back(v);
         } while (v != vertice);
+        // Adiciona o componente encontrado à lista de componentes
         componentes.push_back(componente);
     }
 }
 
 // Função para calcular a quantidade de componentes fortemente conexos usando o algoritmo de Tarjan
 int contarComponentesFortementeConexas(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    // Cria um mapa para armazenar a lista de adjacências do grafo
     map<string, vector<string>> adjacencia;
+    
+    // Preenche o mapa de adjacências com base nas arestas fornecidas
     for (const auto &aresta : arestas) {
+        // Adiciona o destino à lista de adjacências do origem (grafo direcionado)
         adjacencia[aresta.origem].push_back(aresta.destino);
     }
 
+    // Mapeia os índices de descoberta dos vértices
     map<string, int> indices;
+    // Mapeia os menores índices acessíveis dos vértices
     map<string, int> baixos;
+    // Pilha para armazenar vértices durante a busca
     stack<string> pilha;
+    // Conjunto para verificar se um vértice está na pilha
     set<string> naPilha;
+    // Lista para armazenar os componentes fortemente conexos encontrados
     vector<vector<string>> componentes;
+    // Variável para manter o índice de descoberta dos vértices
     int index = 0;
 
+    // Itera sobre todos os vértices do grafo
     for (const auto &vertice : vertices) {
+        // Inicia a DFS a partir de cada vértice não visitado
         if (indices.find(vertice) == indices.end()) {
+            // Chama a função auxiliar de Tarjan para encontrar componentes fortemente conexos
             tarjanDFS(vertice, adjacencia, indices, baixos, pilha, naPilha, componentes, index);
         }
     }
 
-    return componentes.size(); // Retorna a quantidade de componentes fortemente conexos
+    // Retorna a quantidade de componentes fortemente conexos encontrados
+    return componentes.size();
 }
+
+// Função auxiliar DFS que realiza a busca em profundidade para encontrar vértices de articulação e arestas ponte.
+void dfsAux(const string &vertice, const string &pai, int &tempo,
+            map<string, vector<string>> &adjacencia, map<string, int> &descoberta,
+            map<string, int> &maisBaixo, set<string> &visitados, set<string> &articulacoes,
+            vector<pair<string, string>> &pontes, int &filhos) {
+    // Marca o vértice atual como visitado
+    visitados.insert(vertice);
+    // Inicializa o tempo de descoberta e o menor tempo acessível do vértice
+    descoberta[vertice] = maisBaixo[vertice] = ++tempo;
+
+    // Itera sobre todos os vizinhos do vértice atual
+    for (const auto &vizinho : adjacencia[vertice]) {
+        // Ignora o vértice pai para evitar retrocesso na busca
+        if (vizinho == pai) continue;
+
+        // Se o vizinho não foi visitado, realiza a DFS recursivamente
+        if (visitados.find(vizinho) == visitados.end()) {
+            // Incrementa o contador de filhos do vértice atual
+            filhos++;
+            // Chama a DFS recursiva para o vizinho
+            dfsAux(vizinho, vertice, tempo, adjacencia, descoberta, maisBaixo, visitados, articulacoes, pontes, filhos);
+
+            // Atualiza o valor mais baixo do vértice atual com base no valor mais baixo do vizinho
+            maisBaixo[vertice] = min(maisBaixo[vertice], maisBaixo[vizinho]);
+
+            // Verifica se o vértice atual é um ponto de articulação
+            // Caso especial: raiz da DFS com mais de um filho
+            if (pai.empty() && filhos > 1) {
+                articulacoes.insert(vertice);
+            }
+            // Caso geral: vértice não raiz onde o menor tempo acessível do vizinho é maior ou igual ao tempo de descoberta do vértice atual
+            if (!pai.empty() && maisBaixo[vizinho] >= descoberta[vertice]) {
+                articulacoes.insert(vertice);
+            }
+
+            // Verifica se a aresta (vertice, vizinho) é uma ponte
+            if (maisBaixo[vizinho] > descoberta[vertice]) {
+                pontes.emplace_back(vertice, vizinho);
+            }
+        } else {
+            // Atualiza o valor mais baixo do vértice atual com o tempo de descoberta do vizinho
+            maisBaixo[vertice] = min(maisBaixo[vertice], descoberta[vizinho]);
+        }
+    }
+}
+
+//7. Imprimir os vértices de articulação de um grafo não-orientado (priorizar a ordem lexicográfica dos vértices).    
+
+// Função para imprimir os vértices de articulação em ordem lexicográfica
+void imprimirArticulacoes(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    // Cria um mapa para armazenar a lista de adjacências do grafo
+    map<string, vector<string>> adjacencia;
+
+    // Preenche o mapa de adjacências com base nas arestas fornecidas
+    for (const auto &aresta : arestas) {
+        // Adiciona o destino à lista de adjacências do origem
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        // Adiciona o origem à lista de adjacências do destino (grafo não direcionado)
+        adjacencia[aresta.destino].push_back(aresta.origem);
+    }
+
+    // Conjunto para armazenar os vértices já visitados durante a busca
+    set<string> visitados;
+    // Mapas para armazenar os tempos de descoberta e o menor tempo de descoberta acessível
+    map<string, int> descoberta, maisBaixo;
+    // Conjunto para armazenar vértices de articulação identificados
+    set<string> articulacoes;
+    // Lista para armazenar as arestas ponte (não utilizada diretamente aqui)
+    vector<pair<string, string>> pontes;
+    // Variável para manter o tempo de descoberta dos vértices durante a DFS
+    int tempo = 0;
+
+    // Itera sobre todos os vértices do grafo
+    for (const auto &vertice : vertices) {
+        // Inicia a DFS a partir de cada vértice não visitado
+        if (visitados.find(vertice) == visitados.end()) {
+            // Contador de filhos para a DFS
+            int filhos = 0;
+            // Chama a função auxiliar de DFS para explorar o grafo e identificar articulações
+            dfsAux(vertice, "", tempo, adjacencia, descoberta, maisBaixo, visitados, articulacoes, pontes, filhos);
+        }
+    }
+
+    // Cria um vetor a partir do conjunto de vértices de articulação e ordena-o lexicograficamente
+    vector<string> articulacoesOrdenadas(articulacoes.begin(), articulacoes.end());
+    sort(articulacoesOrdenadas.begin(), articulacoesOrdenadas.end());
+
+    // Imprime os vértices de articulação ordenados
+    cout << "Vértices de articulação: ";
+    for (const auto &articulacao : articulacoesOrdenadas) {
+        cout << articulacao << " ";
+    }
+    cout << endl;
+}
+
+//8. Calcular quantas arestas ponte possui um grafo não-orientado.    
+
+// Função para calcular o número de arestas ponte
+int contarArestasPonte(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    // Cria um mapa para armazenar a lista de adjacências do grafo
+    map<string, vector<string>> adjacencia;
+
+    // Preenche o mapa de adjacências com base nas arestas fornecidas
+    for (const auto &aresta : arestas) {
+        // Adiciona o destino à lista de adjacências do origem
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        // Adiciona o origem à lista de adjacências do destino (grafo não direcionado)
+        adjacencia[aresta.destino].push_back(aresta.origem);
+    }
+
+    // Conjunto para armazenar os vértices já visitados durante a busca
+    set<string> visitados;
+    // Mapas para armazenar os tempos de descoberta e o menor tempo de descoberta acessível
+    map<string, int> descoberta, maisBaixo;
+    // Conjunto para armazenar vértices de articulação (não utilizado diretamente aqui)
+    set<string> articulacoes;
+    // Lista para armazenar as arestas ponte identificadas
+    vector<pair<string, string>> pontes;
+    // Variável para manter o tempo de descoberta dos vértices durante a DFS
+    int tempo = 0;
+
+    // Itera sobre todos os vértices do grafo
+    for (const auto &vertice : vertices) {
+        // Inicia a DFS a partir de cada vértice não visitado
+        if (visitados.find(vertice) == visitados.end()) {
+            // Contador de filhos para a DFS
+            int filhos = 0;
+            // Chama a função auxiliar de DFS para explorar o grafo
+            dfsAux(vertice, "", tempo, adjacencia, descoberta, maisBaixo, visitados, articulacoes, pontes, filhos);
+        }
+    }
+
+    // Retorna o número de arestas ponte identificadas
+    return pontes.size();
+}
+
+//9. Imprimir a árvore em profundidade (priorizando a ordem lexicográfica dos vértices; 0 é a origem).
+
+void dfsImprimirArvore(const string &vertice, const map<string, vector<string>> &adjacencia, 
+                       set<string> &visitados, vector<pair<string, string>> &arestasArvore) {
+    // Marca o vértice atual como visitado
+    visitados.insert(vertice);
+
+    // Obtém a lista de vizinhos do vértice atual e ordena-os lexicograficamente
+    vector<string> vizinhos = adjacencia.at(vertice);
+    sort(vizinhos.begin(), vizinhos.end());
+
+    // Itera sobre todos os vizinhos do vértice atual
+    for (const auto &vizinho : vizinhos) {
+        // Verifica se o vizinho ainda não foi visitado
+        if (visitados.find(vizinho) == visitados.end()) {
+            // Armazena a aresta (vertice, vizinho) na árvore gerada pela DFS
+            arestasArvore.emplace_back(vertice, vizinho);
+            // Continua a busca em profundidade (DFS) a partir do vizinho
+            dfsImprimirArvore(vizinho, adjacencia, visitados, arestasArvore);
+        }
+    }
+}
+
+void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &raiz) {
+    // Cria um mapa para armazenar a lista de adjacências do grafo
+    map<string, vector<string>> adjacencia;
+
+    // Preenche o mapa de adjacências com base nas arestas fornecidas
+    for (const auto &aresta : arestas) {
+        // Adiciona o destino à lista de adjacências do origem
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        // Adiciona o origem à lista de adjacências do destino (grafo não direcionado)
+        adjacencia[aresta.destino].push_back(aresta.origem);
+    }
+
+    // Conjunto para armazenar os vértices já visitados durante a busca
+    set<string> visitados;
+    // Lista para armazenar as arestas da árvore em profundidade resultante da DFS
+    vector<pair<string, string>> arestasArvore;
+
+    // Verifica se a raiz fornecida está presente no grafo
+    if (adjacencia.find(raiz) != adjacencia.end()) {
+        // Inicia a busca em profundidade (DFS) a partir da raiz
+        dfsImprimirArvore(raiz, adjacencia, visitados, arestasArvore);
+    } else {
+        // Caso a raiz não esteja presente no grafo, exibe uma mensagem de erro
+        cout << "Raiz não encontrada no grafo." << endl;
+        return;
+    }
+
+    // Imprime as arestas da árvore gerada pela DFS
+    cout << "Árvore em profundidade (DFS Tree):" << endl;
+    for (const auto &aresta : arestasArvore) {
+        // Exibe cada aresta no formato (pai, filho)
+        cout << "(" << aresta.first << ", " << aresta.second << ")" << endl;
+    }
+}
+
+//10. Árvore de largura (priorizando a ordem lexicográfica dos vértices; 0 é a origem).
+
+void bfsImprimirArvore(const string &raiz, const map<string, vector<string>> &adjacencia, 
+                       map<string, string> &pais, vector<pair<string, string>> &arestasArvore) {
+    // Conjunto para armazenar os vértices já visitados durante a busca
+    set<string> visitados;
+
+    // Fila para a implementação da busca em largura (BFS)
+    queue<string> fila;
+
+    // Adiciona a raiz à fila e ao conjunto de visitados
+    fila.push(raiz);
+    visitados.insert(raiz);
+
+    // Enquanto houver vértices na fila
+    while (!fila.empty()) {
+        // Remove o vértice da frente da fila
+        string u = fila.front();
+        fila.pop();
+
+        // Obtém a lista de vizinhos do vértice atual e ordena-os lexicograficamente
+        vector<string> vizinhos = adjacencia.at(u);
+        sort(vizinhos.begin(), vizinhos.end());
+
+        // Itera sobre todos os vizinhos do vértice atual
+        for (const auto &v : vizinhos) {
+            // Verifica se o vizinho ainda não foi visitado
+            if (visitados.find(v) == visitados.end()) {
+                // Marca o vizinho como visitado
+                visitados.insert(v);
+                // Adiciona o vizinho à fila para processamento futuro
+                fila.push(v);
+                // Define o vértice atual como o pai do vizinho
+                pais[v] = u;
+                // Armazena a aresta (u, v) na árvore resultante da BFS
+                arestasArvore.emplace_back(u, v);
+            }
+        }
+    }
+}
+
+void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz) {
+    // Cria um mapa para armazenar a lista de adjacências do grafo
+    map<string, vector<string>> adjacencia;
+
+    // Preenche o mapa de adjacências com base nas arestas fornecidas
+    for (const auto &aresta : arestas) {
+        // Adiciona o destino à lista de adjacências do origem
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        // Adiciona o origem à lista de adjacências do destino (grafo não direcionado)
+        adjacencia[aresta.destino].push_back(aresta.origem);
+    }
+
+    // Mapa para armazenar o pai de cada vértice na árvore resultante da BFS
+    map<string, string> pais;
+    // Lista para armazenar as arestas da árvore em largura resultante da BFS
+    vector<pair<string, string>> arestasArvore;
+
+    // Verifica se a raiz fornecida está presente no grafo
+    if (adjacencia.find(raiz) != adjacencia.end()) {
+        // Inicia a busca em largura (BFS) a partir da raiz
+        bfsImprimirArvore(raiz, adjacencia, pais, arestasArvore);
+    } else {
+        // Caso a raiz não esteja presente no grafo, exibe uma mensagem de erro
+        cout << "Raiz não encontrada no grafo." << endl;
+        return;
+    }
+
+    // Imprime as arestas da árvore gerada pela BFS
+    cout << "Árvore em largura (BFS Tree):" << endl;
+    for (const auto &aresta : arestasArvore) {
+        // Exibe cada aresta no formato (pai, filho)
+        cout << "(" << aresta.first << ", " << aresta.second << ")" << endl;
+    }
+}
+
+//11. Calcular o valor final de uma árvore geradora mínima (para grafos não-orientados).    
+
+// Função auxiliar para encontrar o representante do conjunto de um vértice
+int encontrar(int vertice, vector<int>& pais) {
+    if (pais[vertice] != vertice) {
+        // Compressão de caminho: atualiza o pai do vértice diretamente para a raiz
+        pais[vertice] = encontrar(pais[vertice], pais);
+    }
+    return pais[vertice];
+}
+
+// Função auxiliar para unir dois conjuntos
+void unir(int vertice1, int vertice2, vector<int>& pais, vector<int>& rank) {
+    int raiz1 = encontrar(vertice1, pais);
+    int raiz2 = encontrar(vertice2, pais);
+
+    if (raiz1 != raiz2) {
+        // Une os conjuntos de acordo com a profundidade para manter a árvore balanceada
+        if (rank[raiz1] > rank[raiz2]) {
+            pais[raiz2] = raiz1;
+        } else if (rank[raiz1] < rank[raiz2]) {
+            pais[raiz1] = raiz2;
+        } else {
+            pais[raiz2] = raiz1;
+            rank[raiz1]++; // Aumenta o rank da raiz quando os conjuntos têm a mesma profundidade
+        }
+    }
+}
+
+// Função para calcular o valor total da árvore geradora mínima usando o algoritmo de Kruskal
+int calcularMST(const vector<Aresta>& arestas, const vector<string>& vertices) {
+    // Copia as arestas e as ordena pelo peso
+    vector<Aresta> arestasOrdenadas = arestas;
+    sort(arestasOrdenadas.begin(), arestasOrdenadas.end(), [](const Aresta& a, const Aresta& b) {
+        return a.peso < b.peso; // Ordena as arestas em ordem crescente de peso
+    });
+
+    // Cria um mapa para mapear cada vértice para um índice
+    map<string, int> indice;
+    int index = 0;
+    for (const auto& vertice : vertices) {
+        indice[vertice] = index++; // Atribui um índice único para cada vértice
+    }
+
+    // Inicializa os vetores de pais e rank
+    vector<int> pais(vertices.size()); // Vetor para armazenar o pai de cada vértice
+    vector<int> rank(vertices.size(), 0); // Vetor para armazenar o rank de cada conjunto
+
+    // Inicializa o vetor de pais com valores iguais aos índices
+    for (int i = 0; i < pais.size(); ++i) {
+        pais[i] = i;
+    }
+
+    int valorTotal = 0; // Variável para armazenar o valor total da árvore geradora mínima
+    for (const auto& aresta : arestasOrdenadas) {
+        int u = indice[aresta.origem]; // Índice do vértice de origem
+        int v = indice[aresta.destino]; // Índice do vértice de destino
+        
+        // Verifica se a aresta cria um ciclo
+        if (encontrar(u, pais) != encontrar(v, pais)) {
+            unir(u, v, pais, rank); // Une os conjuntos se não cria ciclo
+            valorTotal += aresta.peso; // Adiciona o peso da aresta ao valor total
+        }
+    }
+
+    return valorTotal; // Retorna o valor total da árvore geradora mínima
+} 
+
+//12.Imprimir a ordem os vértices em uma ordenação topológica. Esta função não fica disponível em grafos não direcionado.  
+
+// Função auxiliar para realizar a busca em profundidade e empilhar os vértices
+void dfsTopologico(const string& vertice, map<string, vector<string>>& adjacencia, map<string, bool>& visitado, stack<string>& topoStack) {
+    visitado[vertice] = true;
+
+    // Ordena os vizinhos do vértice em ordem lexicográfica
+    vector<string> vizinhos = adjacencia[vertice];
+    sort(vizinhos.begin(), vizinhos.end());
+
+    for (const auto& vizinho : vizinhos) {
+        if (!visitado[vizinho]) {
+            dfsTopologico(vizinho, adjacencia, visitado, topoStack);
+        }
+    }
+
+    // Empilha o vértice na pilha de ordenação topológica
+    topoStack.push(vertice);
+}
+
+// Função para imprimir a ordenação topológica
+void imprimirOrdenacaoTopologica(const vector<string>& vertices, const vector<Aresta>& arestas) {
+    map<string, vector<string>> adjacencia;
+    for (const auto& aresta : arestas) {
+        adjacencia[aresta.origem].push_back(aresta.destino);
+    }
+
+    map<string, bool> visitado;
+    stack<string> topoStack;
+
+    for (const auto& vertice : vertices) {
+        visitado[vertice] = false;
+    }
+
+    for (const auto& vertice : vertices) {
+        if (!visitado[vertice]) {
+            dfsTopologico(vertice, adjacencia, visitado, topoStack);
+        }
+    }
+
+    // Imprime a ordenação topológica
+    while (!topoStack.empty()) {
+        cout << topoStack.top() << " ";
+        topoStack.pop();
+    }
+    cout << endl;
+}
+
 // # MENU - NAVEGAÇÕES
 void navegacaoPaginaInicial(int value)
 {
-
     if (value == 1)
     {
         menuVerificacao();
@@ -668,9 +1108,8 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
 {
     int valueSubMenu = value;
 
-    if (value == 1)
+    if (value == 1) // Menu Verificação
     {
-
         switch (valueSubMenu)
         {
         case 1: // Verificação de grafo conexo
@@ -703,8 +1142,22 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
             break;
         case 3: // Verificação de grafo euleriano
             cout << endl
-                 << "--- Verificacao - Grafo eureliano? ---" << endl;
+                 << "--- Verificacao - Grafo euleriano? ---" << endl;
             if (ehEuleriano(arestas, vertices, direcionado))
+            {
+                cout << "Yes" << endl
+                     << endl;
+            }
+            else
+            {
+                cout << "No" << endl
+                     << endl;
+            }
+            break;
+        case 4: // Verificação de grafo possui ciclo
+            cout << endl
+                 << "--- Verificacao - Grafo possui ciclo? ---" << endl;
+            if (detectarCiclos(vertices, arestas))
             {
                 cout << "Yes" << endl
                      << endl;
@@ -720,38 +1173,173 @@ void navegacaoSubPaginas(int value, const vector<Aresta> &arestas, const vector<
             break;
         }
     }
-    else if (value == 2)
+    else if (value == 2) // Menu Listagem
+{
+    switch (valueSubMenu)
     {
-        switch (valueSubMenu)
+        case 1: // Quantidade de componentes conexas
         {
-        case 1: //quantidade de componentes conexas em um grafo não-orientado.   
             cout << endl
-                 << "--- Verificacao - Quantidade componentes conexas ---" << endl;
-
-             int numComponentes = contarComponentesConexas(arestas, vertices);
-                cout << 
-                    "Número de componentes conexas: " << numComponentes << endl;
+                 << "--- Listagem - Quantidade de componentes conexas ---" << endl;
+            int numComponentes = contarComponentesConexas(arestas, vertices);
+            cout << "Número de componentes conexas: " << numComponentes << endl;
             break;
-        /*case 2: // Verificação componentes fortemente conexos
+        }
+        case 2: // Quantidade de componentes fortemente conexas
+        {
             cout << endl
-                 << "--- Verificacao - Quantidade componentes fortemente conexas ---" << endl;
+                 << "--- Listagem - Quantidade de componentes fortemente conexas ---" << endl;
             int numComponentesForte = contarComponentesFortementeConexas(arestas, vertices);
-                cout << 
-                    "Número de componentes fortemente conexas: " << numComponentesForte << endl;
+            cout << "Número de componentes fortemente conexas: " << numComponentesForte << endl;
             break;
+        }
+        case 3: // Vértices de articulação
+        {
+            cout << endl
+                 << "--- Listagem - Vértices de articulação ---" << endl;
+            imprimirArticulacoes(arestas, vertices);
+            cout << endl;
+            break;
+        }
+        case 4: // Quantidade de arestas ponte
+        {
+            cout << endl
+                 << "--- Listagem - Quantidade de arestas ponte ---" << endl;
+            int numArestasPonte = contarArestasPonte(arestas, vertices);
+            cout << "Número de arestas ponte: " << numArestasPonte << endl;
+            break;
+        }
         default:
             cout << retornoValorInvalido() << endl;
-            break;*/
-        }
+            break;
     }
-    else if (value == 3)
+}
+    else if (value == 3) // Menu Configurações
+{
+    switch (valueSubMenu)
     {
-        menuConfiguracoes();
+        case 1: // Árvore de profundidade
+        {
+            cout << endl
+                 << "--- Configuração - Árvore de profundidade ---" << endl;
+             imprimirArvoreEmProfundidade(arestas, vertices[0]);
+            break;
+        }
+        case 2: // Árvore de largura
+        {
+            cout << endl
+                 << "--- Configuração - Árvore de largura ---" << endl;
+            imprimirArvoreEmLargura(arestas, vertices[0]); // Use o primeiro vértice como raiz
+            break;
+        }
+        case 3: // Árvore geradora mínima
+        {
+            cout << endl
+                 << "--- Configuração - Árvore geradora mínima ---" << endl;
+            int valorMST = calcularMST(arestas, vertices);
+            cout << "Árvore geradora mínima gerada:" << endl;
+            cout << valorMST << endl;
+            break;
+        }
+        case 4: // Ordem topológica
+        {
+            //ajustar para que essa função só seja chamada em grafo nao direcionado
+            cout << endl
+                 << "--- Configuração - Ordem topológica ---" << endl;
+            
+            imprimirOrdenacaoTopologica(vertices,arestas);
+
+            break;
+        }
+        case 5: // Caminho mínimo entre dois vértices
+        {
+            cout << endl
+                 << "--- Configuração - Caminho mínimo entre dois vértices ---" << endl;
+            
+            cout << endl;
+            
+            break;
+        }
+        case 6: // Fluxo máximo
+        {
+            cout << endl
+                 << "--- Configuração - Fluxo máximo ---" << endl;
+            
+            break;
+        }
+        case 7: // Fechamento transitivo
+        {
+            cout << endl
+                 << "--- Configuração - Fechamento transitivo ---" << endl;
+            
+            cout << endl;
+            break;
+        }
+        default:
+            cout << retornoValorInvalido() << endl;
+            break;
+        }
     }
 }
 
 // # MENU - EXECUÇÃO
-void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não funciona corretamente
+void executarMenu()
+{
+    int value;
+    int optionsEndProgram;
+    bool direcionado;
+    bool encerrarPrograma = false;
+    vector<Aresta> arestas;
+    vector<string> vertices;
+
+    boasVindas();
+    leituraGrafo();
+
+    while (!encerrarPrograma)
+    {
+        menuPrincipal();
+        cout << retornoInsiraValor();
+        cin >> value;
+        cin.ignore();
+
+        if (value == 0)
+        {
+            break; // Saída do menu principal
+        }
+
+        if (acessoSubPaginas(value)) // Verifica se o submenu é acessível
+        {
+            cout << retornoInsiraValor();
+            cin >> value;
+            cin.ignore();
+
+            if (value == 0)
+            {
+                // Volta ao menu principal sem reiniciar o programa
+                continue;
+            }
+
+            navegacaoSubPaginas(value, arestas, vertices, direcionado); // Navega nos submenus
+        }
+        else
+        {
+            cout << retornoValorInvalido() << endl;
+        }
+
+        cout << "Deseja realizar uma nova analise? 1 - Sim | 2 - Nao" << endl;
+        cout << endl << retornoInsiraValor();
+        cin >> optionsEndProgram;
+        cin.ignore();
+
+        if (optionsEndProgram == 2)
+        {
+            cout << "Programa finalizado! Até mais!" << endl;
+            encerrarPrograma = true;
+        }
+    }
+}
+
+/*void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não funciona corretamente
 {
     int value;
     int optionsEndProgram;
@@ -804,7 +1392,7 @@ void executarMenu() // #TODO - Corrigir execução - na segunda consulta, não f
         }
     }
 }
-
+*/
 int main()
 {
     executarMenu();
