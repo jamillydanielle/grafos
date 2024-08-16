@@ -252,8 +252,8 @@ void leituraGrafo()
 
     cout << "[ Config. Arestas ]" << endl
          << endl;
-    cout << "* Insira as arestas no formato: id_aresta u v p\n"
-         << "--- Ex.: 0 a b 5 ---" << endl;
+    cout << "* Insira as arestas no formato: id_aresta u v p"
+         << endl << "--- Ex.: 0 a b 5 ---" << endl;
     cout << "--------------------------------------------" << endl
          << endl;
     insiraArestas(arestas, vertices, numArestas);
@@ -1129,7 +1129,7 @@ void menuVerificacao(const vector<Aresta> &arestas, const vector<string> &vertic
     switch (valueSubMenu)
     {
     case 0:
-        menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+        menuPrincipal(); 
         cout << retornoInsiraValor();
         int value;
         cin >> value;
@@ -1212,7 +1212,7 @@ void menuListagem(const vector<Aresta> &arestas, const vector<string> &vertices,
     switch (valueSubMenu)
     {
     case 0:
-        menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+        menuPrincipal(); 
         cout << retornoInsiraValor();
         int value;
         cin >> value;
@@ -1222,7 +1222,7 @@ void menuListagem(const vector<Aresta> &arestas, const vector<string> &vertices,
     case 1: // Componentes conexas
         cout << endl
              << "--- Listagem - Componentes Conexas ---" << endl;
-        cout << "Qtd. de componentes conexas: " << contarComponentesConexas(arestas, vertices) << endl;
+        cout << "Qtd. de componentes conexas: " << contarComponentesConexas(arestas, vertices) << endl << endl;
         break;
     case 2: // Componentes fortemente conexas
         cout << endl
@@ -1265,7 +1265,7 @@ void menuConfiguracoes(const vector<Aresta> &arestas, const vector<string> &vert
     switch (valueSubMenu)
     {
     case 0:
-        menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+        menuPrincipal(); 
         cout << retornoInsiraValor();
         int value;
         cin >> value;
@@ -1362,7 +1362,7 @@ void executarMenu() // #TODO: Corrigir execução - na segunda consulta, não fu
     boasVindas();
     leituraGrafo();
 
-    menuPrincipal(); // #TODO: Ao inserir valor inválido no primeiro menu, o programa reinicia, e perde-se todos os dados de arestas e vértices do grafo que já foram preenchidas
+    menuPrincipal(); 
     cout << retornoInsiraValor();
     cin >> value;
     cin.ignore();
