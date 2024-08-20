@@ -151,22 +151,21 @@ void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numAre
     string u, v;
     float p;
     int i = 0;
-    while(i <= numArestas){
+    while(i < numArestas){
         cin >> id >> u >> v >> p;
 
-        arestas.push_back(Aresta{id, u, v, static_cast<int>(p)});
-
+        arestas.add(Aresta{id, u, v, p});
         if (find(vertices.begin(), vertices.end(), u) == vertices.end())
         {
-            vertices.push_back(u);
+            vertices.add(u); // Verificar se este vértice já existe, se existir não dá entrada nele
         }
         if (find(vertices.begin(), vertices.end(), v) == vertices.end())
         {
-            vertices.push_back(v);
-        }
+            vertices.add(v); // Verificar se este vértice já existe, se existir não dá entrada nele
         }
         i++;
     }
+}
 
 void leituraGrafo()
 {
