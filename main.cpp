@@ -1155,7 +1155,6 @@ void imprimirOrdenacaoTopologica(const vector<string> &vertices, const vector<Ar
 // ----------------------------------------------------------------
 // # MENU - NAVEGAÇÕES
 // ----------------------------------------------------------------
-
 void navegacaoMenu(int value)
 {
     switch (value)
@@ -1254,7 +1253,9 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
     }
 }
 
-// # MENU - EXECUÇÃO
+// ----------------------------------------------------------------
+// # MENU - EXECUÇÕES
+// ----------------------------------------------------------------
 void executarMenu(){
     int value;
     bool direcionado;
