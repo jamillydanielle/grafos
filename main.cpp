@@ -890,7 +890,7 @@ void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &r
     }
     else
     {
-        cout << "Raiz não encontrada no grafo." << endl;
+        cout << -1 << endl;
         return;
     }
 
@@ -913,7 +913,7 @@ void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &r
     {
         for (const auto &id : idsArvore)
         {
-            cout << "ID: " << id << endl;
+            cout << id << endl;
         }
     }
     else
@@ -923,12 +923,12 @@ void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &r
         {
             for (const auto &id : idsArvore)
             {
-                cout << "ID: " << id << endl;
+                cout << id << endl;
             }
         }
         else
         {
-            cout << "A raiz especificada não é 0. Nenhuma árvore é exibida." << endl;
+            cout << -1 << endl;
         }
     }
 }
@@ -994,7 +994,7 @@ void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz)
     }
     else
     {
-        cout << "Raiz não encontrada no grafo." << endl;
+        cout << -1 << endl;
         return;
     }
 
@@ -1017,7 +1017,7 @@ void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz)
     {
         for (const auto &id : idsArvore)
         {
-            cout << "ID: " << id << endl;
+            cout << id << endl;
         }
     }
     else
@@ -1027,12 +1027,12 @@ void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz)
         {
             for (const auto &id : idsArvore)
             {
-                cout << "ID: " << id << endl;
+                cout << id << endl;
             }
         }
         else
         {
-            cout << "A raiz especificada não é 0. Nenhuma árvore é exibida." << endl;
+            cout << -1 << endl;
         }
     }
 }
