@@ -21,11 +21,6 @@ string retornoValorInvalido()
     return "Valor invalido, tente novamente.";
 }
 
-string retornoEncerrarPrograma()
-{
-    return "> Insira 0 para encerrar o programa";
-}
-
 // ----------------------------------------------------------------
 // # CONFIGURAÇÕES GERAIS/ VALIDAÇÕES DE ENTRADAS
 // ----------------------------------------------------------------
@@ -905,12 +900,12 @@ void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &r
     else
     {
         // Caso a raiz não esteja presente no grafo, exibe uma mensagem de erro
-        cout << "Raiz não encontrada no grafo." << endl;
+        cout << "Raiz não encontrada no grafo.";
         return;
     }
 
     // Imprime as arestas da árvore gerada pela DFS
-    cout << "Árvore em profundidade (DFS Tree):" << endl;
+    cout << "Árvore em profundidade (DFS Tree):";
     for (const auto &aresta : arestasArvore)
     {
         // Exibe cada aresta no formato (pai, filho)
@@ -1155,21 +1150,11 @@ void imprimirOrdenacaoTopologica(const vector<string> &vertices, const vector<Ar
 // ----------------------------------------------------------------
 // # MENU - NAVEGAÇÕES
 // ----------------------------------------------------------------
-void navegacaoMenu(int value)
-{
-    switch (value)
-    {
-    case 0:{
-        cout << "Programa encerrado com sucesso! Ate mais." << endl << endl << endl;
-        break;}
-    }
-}
-
 void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
     switch (value)
     {
-    case 1: // Verificação -- Conexo
+    case 0: // Verificação -- Conexo
         if (ehConexo(arestas, vertices))
         {
             cout << 1 << endl;
@@ -1179,7 +1164,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
             cout << 0 << endl;
         }
         break;
-    case 2: // Verificação -- Bipartido
+    case 1: // Verificação -- Bipartido
         if (ehBipartido(arestas, vertices))
         {
             cout << 1 << endl;
@@ -1189,7 +1174,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
             cout << 0 << endl;
         }
         break;
-    case 3: // Verificação -- Euleriano
+    case 2: // Verificação -- Euleriano
         if (ehEuleriano(arestas, vertices, direcionado))
         {
             cout << 1 << endl;
@@ -1199,7 +1184,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
             cout << 0 << endl;
         }
         break;
-    case 4: // Verificação -- Ciclo
+    case 3: // Verificação -- Ciclo
         if (detectarCiclos(vertices, arestas))
         {
             cout << 1 << endl;
@@ -1210,42 +1195,42 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         }
         break;
 
-    case 5:{ // Listagem -- Componentes conexas
+    case 4:{ // Listagem -- Componentes conexas
         cout<< contarComponentesConexas(arestas, vertices) << endl;
         break;
         }
-    case 6:{ // Listagem -- Componentes fortemente conexas
+    case 5:{ // Listagem -- Componentes fortemente conexas
         cout << contarComponentesFortementeConexas(arestas, vertices) << endl;
         break; }
-    case 7:{ // Listagem -- Vertices de articulação
+    case 6:{ // Listagem -- Vertices de articulação
         cout << "#TODO - Implementar" << endl;
         break; }
-    case 8:{ // Arestas ponte
+    case 7:{ // Arestas ponte
         cout << "#TODO - Implementar" << endl;
         break; }
-    case 9: // Árvore de profundidade 
+    case 8: // Árvore de profundidade 
         imprimirArvoreEmProfundidade(arestas, vertices[0]);
         cout << endl;
         break;
-    case 10: // Árvore de largura 
+    case 9: // Árvore de largura 
         imprimirArvoreEmLargura(arestas, vertices[0]);
         cout << endl;
         break;
-    case 11:{ // Árvore geradora mínima
+    case 10:{ // Árvore geradora mínima
         int valorMST = calcularMST(arestas, vertices);
         cout << valorMST << endl;
         break; }
-    case 12: // Ordem topológica - apenas grafo nao direcionado
+    case 11: // Ordem topológica - apenas grafo nao direcionado
         imprimirOrdenacaoTopologica(vertices, arestas, direcionado);
         cout << endl;
         break;
-    case 13:{ // Caminho mínimo entre dois vértices
+    case 12:{ // Caminho mínimo entre dois vértices
         cout << "#TODO - Implementar" << endl;
         break; }
-    case 14:{ // Fluxo máximo
+    case 13:{ // Fluxo máximo
         cout << "#TODO - Implementar" << endl;
         break; }
-    case 15:{ // Fechamento transitivo
+    case 14:{ // Fechamento transitivo
         cout << "#TODO - Implementar" << endl;
         break; }
     default:
@@ -1285,9 +1270,6 @@ void executarMenu(){
     for (int val : values) {
         if (val != 0) {
             navegacaoMenu(val, arestas, vertices, direcionado);
-        } else {
-            navegacaoMenu(val);
-            break; // Caso encontre um valor 0, para a execução
         }
     }
     
