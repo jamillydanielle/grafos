@@ -1185,6 +1185,110 @@ void imprimirOrdenacaoTopologica(const vector<string> &vertices, const vector<Ar
         cout << -1 << endl;
     }
 }
+// Algoritmo de Dijkstra para encontrar o caminho mínimo
+vector<string> dijkstra(const vector<Aresta> &arestas, const vector<string> &vertices, const string &origem, const string &destino)
+{
+    // Mapa de adjacência para representar o grafo
+    map<string, vector<pair<string, int>>> adjacencia;
+    for (const auto &aresta : arestas)
+    {
+        adjacencia[aresta.origem].emplace_back(aresta.destino, aresta.peso);
+        adjacencia[aresta.destino].emplace_back(aresta.origem, aresta.peso); // Adiciona a aresta na direção oposta para grafos não direcionados
+    }
+
+    // Mapa de distâncias e de predecessores
+    map<string, int> distancia;
+    map<string, string> predecessor;
+    for (const auto &vertice : vertices)
+    {
+        distancia[vertice] = numeric_limits<int>::max(); // Inicializa todas as distâncias como "infinito"
+        predecessor[vertice] = ""; // Inicializa todos os predecessores como vazios
+    }
+
+    // Configura a distância da origem como 0
+    distancia[origem] = 0;
+
+    // Fila de prioridade para o Dijkstra
+    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<>> filaPrioridade;
+    filaPrioridade.emplace(0, origem);
+
+    while (!filaPrioridade.empty())
+    {
+        string u = filaPrioridade.top().second;
+        int distU = filaPrioridade.top().first;
+        filaPrioridade.pop();
+
+        // Se a distância atual for maior do que a registrada, continue
+        if (distU > distancia[u])
+            continue;
+
+        // Explora todos os vizinhos de u
+        for (const auto& elem : adjacencia[u])
+        {
+            const string& v = elem.first;
+            int peso = elem.second;
+            int novaDistancia = distancia[u] + peso;
+
+            // Se a nova distância for menor, atualiza a distância e o predecessor
+            if (novaDistancia < distancia[v])
+            {
+                distancia[v] = novaDistancia;
+                predecessor[v] = u;
+                filaPrioridade.emplace(novaDistancia, v);
+            }
+        }
+    }
+
+    // Reconstrói o caminho mínimo de origem a destino
+    vector<string> caminho;
+    for (string v = destino; !v.empty(); v = predecessor[v])
+    {
+        caminho.push_back(v);
+    }
+
+    // Se o caminho for válido, inverter a ordem para começar da origem
+    if (caminho.back() == origem)
+    {
+        reverse(caminho.begin(), caminho.end());
+    }
+    else
+    {
+        // Se não houver caminho, retorna um vetor vazio
+        caminho.clear();
+    }
+
+    return caminho;
+}
+
+// Função auxiliar que chama dijkstra para o caso onde a origem é 0 e o destino é n-1
+void calcularCaminhoMinimo(const vector<Aresta> &arestas, const vector<string> &vertices)
+{
+    // Verifica se há pelo menos dois vértices para definir origem e destino
+    if (vertices.size() < 2)
+    {
+        cout << -1 << endl;
+        return;
+    }
+
+    string origem = vertices[0]; // Origem é o primeiro vértice
+    string destino = vertices[vertices.size() - 1]; // Destino é o último vértice
+
+    // Chama a função dijkstra para calcular o caminho mínimo
+    vector<string> caminhoMinimo = dijkstra(arestas, vertices, origem, destino);
+
+    if (!caminhoMinimo.empty())
+    {
+        for (const auto &v : caminhoMinimo)
+        {
+            cout << v << " ";
+        }
+        cout << endl;
+    }
+    else
+    {
+        cout << -1 << endl;
+    }
+}
 
 // ----------------------------------------------------------------
 // # MENU - NAVEGAÇÕES
@@ -1296,7 +1400,8 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         cout << endl;
         break;
     case 12:{ // Caminho mínimo entre dois vértices
-        cout << "#TODO - Implementar" << endl;
+        calcularCaminhoMinimo(arestas,vertices);
+        cout << endl;
         break; }
     case 13:{ // Fluxo máximo
         cout << "#TODO - Implementar" << endl;
