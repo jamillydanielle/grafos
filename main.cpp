@@ -145,57 +145,14 @@ string solicitarValor(const string &tipoValidacao)
     return valor;
 }
 
-bool validarAresta(const string &input)
-{
-    istringstream value(input);
-    string u, v;
-    int id;
-    float p;
-
-    value >> id >> u >> v >> p;
-
-    // Verifica se a leitura das variáveis foi bem-sucedida
-    if (value.fail() or !value.eof())
-    {
-        return false;
-    }
-
-    // Valida cada parte da entrada
-    return validarEntrada(to_string(id), "inteiro") and
-           validarEntrada(to_string(p), "float") and
-           validarEntrada(u, "caractereAlfanumerico") and
-           validarEntrada(v, "caractereAlfanumerico");
-}
-
 void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numArestas)
 {
-    for (int i = 0; i < numArestas; ++i)
-    {
-        string input;
-        bool valido = false;
-
-        while (!valido)
-        {
-            cout << "> " << i + 1 << "/" << numArestas << ": "; // #TODO: Tratar exibição de primeira leitura, onde aparece 1/n - já exibindo que o valor não está válido sem nem ter preenchido nada
-            getline(cin, input);
-
-            if (validarAresta(input))
-            {
-                valido = true;
-            }
-            else
-            {
-                cout << endl
-                     << retornoValorInvalido() << endl
-                     << endl;
-            }
-        }
-
-        int id;
-        string u, v;
-        float p;
-        istringstream value(input);
-        value >> id >> u >> v >> p;
+    int id;
+    string u, v;
+    float p;
+    int i = 0;
+    while(i <= numArestas){
+        cin >> id >> u >> v >> p;
 
         arestas.push_back(Aresta{id, u, v, static_cast<int>(p)});
 
@@ -207,8 +164,9 @@ void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numAre
         {
             vertices.push_back(v);
         }
+        }
+        i++;
     }
-}
 
 void leituraGrafo()
 {
@@ -279,21 +237,21 @@ void menu()
     cout << "--------------------------------------------------------------------------------" << endl;
     cout << "Num. |   Tipo           |   Funcao" << endl;
     cout << "--------------------------------------------------------------------------------" << endl;
-    cout << "1    |   Verificacao    |   Conexo" << endl;
-    cout << "2    |   Verificacao    |   Bipartido" << endl;
-    cout << "3    |   Verificacao    |   Eureliano" << endl;
-    cout << "4    |   Verificacao    |   Possui ciclo" << endl;
-    cout << "5    |   Listagem       |   Quantidade de Componentes conexas" << endl;
-    cout << "6    |   Listagem       |   Quantidade de Componentes fortemente conexas" << endl;
-    cout << "7    |   Listagem       |   Vertices de Articulacao" << endl;
-    cout << "8    |   Listagem       |   Quantidade de Arestas Ponte" << endl;
-    cout << "9    |   Configuracao   |   Arvore de profundidade" << endl;
-    cout << "10   |   Configuracao   |   Arvore de largura" << endl;
-    cout << "11   |   Configuracao   |   Arvore geradora minima" << endl;
-    cout << "12   |   Configuracao   |   Ordem topologia" << endl;
-    cout << "13   |   Configuracao   |   Caminho minimo entre dois vertices" << endl;
-    cout << "14   |   Configuracao   |   Fluxo maximo" << endl;
-    cout << "15   |   Configuracao   |   Fechamento transitivo" << endl;
+    cout << "0    |   Verificacao    |   Conexo" << endl;
+    cout << "1    |   Verificacao    |   Bipartido" << endl;
+    cout << "2    |   Verificacao    |   Eureliano" << endl;
+    cout << "3    |   Verificacao    |   Possui ciclo" << endl;
+    cout << "4    |   Listagem       |   Quantidade de Componentes conexas" << endl;
+    cout << "5    |   Listagem       |   Quantidade de Componentes fortemente conexas" << endl;
+    cout << "6    |   Listagem       |   Vertices de Articulacao" << endl;
+    cout << "7    |   Listagem       |   Quantidade de Arestas Ponte" << endl;
+    cout << "8    |   Configuracao   |   Arvore de profundidade" << endl;
+    cout << "9    |   Configuracao    |   Arvore de largura" << endl;
+    cout << "10   |   Configuracao   |   Arvore geradora minima" << endl;
+    cout << "11   |   Configuracao   |   Ordem topologia" << endl;
+    cout << "12   |   Configuracao   |   Caminho minimo entre dois vertices" << endl;
+    cout << "13   |   Configuracao   |   Fluxo maximo" << endl;
+    cout << "14   |   Configuracao   |   Fechamento transitivo" << endl;
     cout << "--------------------------------------------------------------------------------" << endl << endl;
 }
 
@@ -400,10 +358,9 @@ bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices, boo
             }
         }
     }
-
-        return true; // O grafo é fraco conexo
-    }
+    return true; // O grafo é fraco conexo
 }
+
 // 2. Verificar se um grafo não-orientado é bipartido.
 
 // Função para verificar se um grafo é bipartido
@@ -1062,7 +1019,6 @@ void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz, 
     }
     bool conexo = ehConexo(arestas, vertices,direcionado);
 
-    cout << "Árvore em largura (BFS Tree):" << endl;
     if (conexo || raiz == "0")
     {
         for (const auto &id : idsArvore)
@@ -1072,7 +1028,6 @@ void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz, 
     }
     else
     {
-        cout << "O grafo é desconexo. Apenas a árvore com a raiz 0 é exibida." << endl;
         if (raiz == "0")
         {
             for (const auto &id : idsArvore)
@@ -1427,7 +1382,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
     switch (value)
     {
     case 0:{ // Verificação -- Conexo
-        if (ehConexo(arestas, vertices,direcionado))
+        if ((ehConexo(arestas, vertices,direcionado))==true)
         {
             cout << 1 << endl;
         }
