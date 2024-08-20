@@ -1172,81 +1172,81 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
     case 1: // Verificação -- Conexo
         if (ehConexo(arestas, vertices))
         {
-            cout << 1 << endl << endl;
+            cout << 1 << endl;
         }
         else
         {
-            cout << 0 << endl << endl;
+            cout << 0 << endl;
         }
         break;
     case 2: // Verificação -- Bipartido
         if (ehBipartido(arestas, vertices))
         {
-            cout << 1 << endl << endl;
+            cout << 1 << endl;
         }
         else
         {
-            cout << 0 << endl << endl;
+            cout << 0 << endl;
         }
         break;
     case 3: // Verificação -- Euleriano
         if (ehEuleriano(arestas, vertices, direcionado))
         {
-            cout << 1 << endl << endl;
+            cout << 1 << endl;
         }
         else
         {
-            cout << 0 << endl << endl;
+            cout << 0 << endl;
         }
         break;
     case 4: // Verificação -- Ciclo
         if (detectarCiclos(vertices, arestas))
         {
-            cout << 1 << endl << endl;
+            cout << 1 << endl;
         }
         else
         {
-            cout << 0 << endl << endl;
+            cout << 0 << endl;
         }
         break;
 
     case 5:{ // Listagem -- Componentes conexas
-        cout<< contarComponentesConexas(arestas, vertices) << endl << endl;
+        cout<< contarComponentesConexas(arestas, vertices) << endl;
         break;
         }
     case 6:{ // Listagem -- Componentes fortemente conexas
-        cout << contarComponentesFortementeConexas(arestas, vertices) << endl << endl;
+        cout << contarComponentesFortementeConexas(arestas, vertices) << endl;
         break; }
     case 7:{ // Listagem -- Vertices de articulação
-        cout << "#TODO - Implementar";
+        cout << "#TODO - Implementar" << endl;
         break; }
     case 8:{ // Arestas ponte
-        cout << "#TODO - Implementar";
+        cout << "#TODO - Implementar" << endl;
         break; }
     case 9: // Árvore de profundidade 
         imprimirArvoreEmProfundidade(arestas, vertices[0]);
-        cout << endl << endl;
+        cout << endl;
         break;
     case 10: // Árvore de largura 
         imprimirArvoreEmLargura(arestas, vertices[0]);
-        cout << endl << endl;
+        cout << endl;
         break;
     case 11:{ // Árvore geradora mínima
         int valorMST = calcularMST(arestas, vertices);
-        cout << valorMST << endl << endl;
+        cout << valorMST << endl;
         break; }
     case 12: // Ordem topológica - apenas grafo nao direcionado
         imprimirOrdenacaoTopologica(vertices, arestas, direcionado);
-        cout << endl << endl;
+        cout << endl;
         break;
     case 13:{ // Caminho mínimo entre dois vértices
-        cout << "#TODO - Implementar";
+        cout << "#TODO - Implementar" << endl;
         break; }
     case 14:{ // Fluxo máximo
-        cout << "#TODO - Implementar";
+        cout << "#TODO - Implementar" << endl;
         break; }
     case 15:{ // Fechamento transitivo
-        cout << "#TODO - Implementar";
+        cout << "#TODO - Implementar" << endl;
         break; }
     default:
         break;
@@ -1257,31 +1257,38 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
 // # MENU - EXECUÇÕES
 // ----------------------------------------------------------------
 void executarMenu(){
+    string input;
     int value;
     bool direcionado;
     vector<Aresta> arestas;
     vector<string> vertices;
 
     boasVindas();
-    leituraGrafo();
-
     menu();
     cout << retornoInsiraValor();
-    cin >> value;
-    cin.ignore();
+    getline(cin, input);
+    istringstream idFuncoes(input);
+    cout << endl << endl;
 
-    while (value != 0) {
-        if ((validacaoOpcaoSelecionada(value)) == true){
-        navegacaoMenu(value, arestas, vertices, direcionado);
-
-        menu();
-        cout << retornoInsiraValor();
-        cin >> value;
-        cin.ignore();
+    vector<int> values;
+    // Ler os valores da linha
+    while (idFuncoes >> value) {
+        if (validacaoOpcaoSelecionada(value)) {
+            values.push_back(value);
         }
     }
-    if (value == 0){
-        navegacaoMenu(value);
+
+    leituraGrafo();
+    cout << endl << endl;
+
+    // Executar as opções válidas
+    for (int val : values) {
+        if (val != 0) {
+            navegacaoMenu(val, arestas, vertices, direcionado);
+        } else {
+            navegacaoMenu(val);
+            break; // Caso encontre um valor 0, para a execução
+        }
     }
     
 }
