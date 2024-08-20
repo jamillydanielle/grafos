@@ -1160,7 +1160,7 @@ void navegacaoMenu(int value)
     switch (value)
     {
     case 0:{
-        cout << "Programa encerrado com sucesso! Ate mais." << endl << endl;
+        cout << "Programa encerrado com sucesso! Ate mais." << endl << endl << endl;
         break;}
     }
 }
@@ -1172,41 +1172,41 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
     case 1: // Verificação -- Conexo
         if (ehConexo(arestas, vertices))
         {
-            cout << "1" << endl << endl;
+            cout << 1 << endl << endl;
         }
         else
         {
-            cout << "0" << endl << endl;
+            cout << 0 << endl << endl;
         }
         break;
     case 2: // Verificação -- Bipartido
         if (ehBipartido(arestas, vertices))
         {
-            cout << "1" << endl << endl;
+            cout << 1 << endl << endl;
         }
         else
         {
-            cout << "0" << endl << endl;
+            cout << 0 << endl << endl;
         }
         break;
     case 3: // Verificação -- Euleriano
         if (ehEuleriano(arestas, vertices, direcionado))
         {
-            cout << "1" << endl << endl;
+            cout << 1 << endl << endl;
         }
         else
         {
-            cout << "0" << endl << endl;
+            cout << 0 << endl << endl;
         }
         break;
     case 4: // Verificação -- Ciclo
         if (detectarCiclos(vertices, arestas))
         {
-            cout << "1" << endl << endl;
+            cout << 1 << endl << endl;
         }
         else
         {
-            cout << "0" << endl << endl;
+            cout << 0 << endl << endl;
         }
         break;
 
