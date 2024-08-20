@@ -1223,17 +1223,20 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
     case 8:{ // Arestas ponte
         break; }
     case 9: // Árvore de profundidade 
-        cout << imprimirArvoreEmProfundidade(arestas, vertices[0]) << endl << endl;
+        imprimirArvoreEmProfundidade(arestas, vertices[0]);
+        cout << endl << endl;
         break;
     case 10: // Árvore de largura 
-        cout << imprimirArvoreEmLargura(arestas, vertices[0]) << endl << endl;
+        imprimirArvoreEmLargura(arestas, vertices[0]);
+        cout << endl << endl;
         break;
     case 11:{ // Árvore geradora mínima
         int valorMST = calcularMST(arestas, vertices);
         cout << valorMST << endl << endl;
         break; }
     case 12: // Ordem topológica - apenas grafo nao direcionado
-        cout << imprimirOrdenacaoTopologica(vertices, arestas, direcionado) << endl << endl;
+        imprimirOrdenacaoTopologica(vertices, arestas, direcionado);
+        cout << endl << endl;
         break;
     case 13:{ // Caminho mínimo entre dois vértices
         break; }
@@ -1247,8 +1250,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
 }
 
 // # MENU - EXECUÇÃO
-void executarMenu()
-{
+void executarMenu(){
     int value;
     bool direcionado;
     vector<Aresta> arestas;
@@ -1270,6 +1272,7 @@ void executarMenu()
         cout << retornoInsiraValor();
         cin >> value;
         cin.ignore();
+        }
     }
     if (value == 0){
         navegacaoMenu(value);
