@@ -255,14 +255,14 @@ void leituraGrafo()
 // ----------------------------------------------------------------
 int qntOpcoesMenu()
 {
-    return 13;
+    return 15;
 }
 
 bool validacaoOpcaoSelecionada(int value)
 {
     bool valid = false;
 
-    if (value > qntOpcoesMenu() or value <= 0)
+    if (value > qntOpcoesMenu() or value < 0)
     {
         retornoValorInvalido();
     }
@@ -281,25 +281,25 @@ void menu()
          << endl;
     cout << "* Selecione o Num. da opcao desejada:" << endl
          << endl;
-    cout << "-------------------------------------------------------------------------------------------------" << endl;
-    cout << "Num. |   Tipo                 |   Funcao" << endl;
-    cout << "-------------------------------------------------------------------------------------------------" << endl;
-    cout << "1    |   Verificacao          |   Conexo" << endl;
-    cout << "2    |   Verificacao          |   Bipartido" << endl;
-    cout << "3    |   Verificacao          |   Eureliano" << endl;
-    cout << "3    |   Verificacao          |   Possui ciclo" << endl;
-    cout << "1    |   Listagem             |   Quantidade de Componentes conexas" << endl;
-    cout << "2    |   Listagem             |   Quantidade de Componentes fortemente conexas" << endl;
-    cout << "3    |   Listagem             |   Vertices de Articulacao" << endl;
-    cout << "4    |   Listagem             |   Quantidade de Arestas Ponte" << endl;
-    cout << "4    |   Configuracao         |   Arvore de profundidade" << endl;
-    cout << "2    |   Configuracao         |   Arvore de largura" << endl;
-    cout << "3    |   Configuracao         |   Arvore geradora minima" << endl;
-    cout << "4    |   Configuracao         |   Ordem topologia" << endl;
-    cout << "5    |   Configuracao         |   Caminho minimo entre dois vertices" << endl;
-    cout << "6    |   Configuracao         |   Fluxo maximo" << endl;
-    cout << "7    |   Configuracao         |   Fechamento transitivo" << endl;
-    cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
+    cout << "--------------------------------------------------------------------------------" << endl;
+    cout << "Num. |   Tipo           |   Funcao" << endl;
+    cout << "--------------------------------------------------------------------------------" << endl;
+    cout << "1    |   Verificacao    |   Conexo" << endl;
+    cout << "2    |   Verificacao    |   Bipartido" << endl;
+    cout << "3    |   Verificacao    |   Eureliano" << endl;
+    cout << "4    |   Verificacao    |   Possui ciclo" << endl;
+    cout << "5    |   Listagem       |   Quantidade de Componentes conexas" << endl;
+    cout << "6    |   Listagem       |   Quantidade de Componentes fortemente conexas" << endl;
+    cout << "7    |   Listagem       |   Vertices de Articulacao" << endl;
+    cout << "8    |   Listagem       |   Quantidade de Arestas Ponte" << endl;
+    cout << "9    |   Configuracao   |   Arvore de profundidade" << endl;
+    cout << "10   |   Configuracao   |   Arvore de largura" << endl;
+    cout << "11   |   Configuracao   |   Arvore geradora minima" << endl;
+    cout << "12   |   Configuracao   |   Ordem topologia" << endl;
+    cout << "13   |   Configuracao   |   Caminho minimo entre dois vertices" << endl;
+    cout << "14   |   Configuracao   |   Fluxo maximo" << endl;
+    cout << "15   |   Configuracao   |   Fechamento transitivo" << endl;
+    cout << "--------------------------------------------------------------------------------" << endl << endl;
     cout << retornoEncerrarPrograma() << endl << endl;
 }
 
@@ -1156,271 +1156,125 @@ void imprimirOrdenacaoTopologica(const vector<string> &vertices, const vector<Ar
 // # MENU - NAVEGAÇÕES
 // ----------------------------------------------------------------
 
-void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+void navegacaoMenu(int value)
 {
     switch (value)
     {
     case 0:{
+        cout << "Programa encerrado com sucesso! Ate mais." << endl << endl;
         break;}
-    case 1: // Verificação de grafo conexo
-        if (ehConexo(arestas, vertices))
-        {
-            cout << "1" << endl
-                 << endl;
-        }
-        else
-        {
-            cout << "0" << endl
-                 << endl;
-        }
-        menuVerificacao(arestas, vertices, direcionado);
-        break;
-    case 2: // Verificação bipartida
-        cout << endl
-             << "--- Verificacao - Grafo bipartido? ---" << endl;
-        if (ehBipartido(arestas, vertices))
-        {
-            cout << "Sim" << endl
-                 << endl;
-        }
-        else
-        {
-            cout << "Nao" << endl
-                 << endl;
-        }
-        menuVerificacao(arestas, vertices, direcionado);
-        break;
-    case 3: // Verificação Euleriano
-        cout << endl
-             << "--- Verificacao - Grafo Euleriano? ---" << endl;
-        if (ehEuleriano(arestas, vertices, direcionado))
-        {
-            cout << "Sim" << endl
-                 << endl;
-        }
-        else
-        {
-            cout << "Nao" << endl
-                 << endl;
-        }
-        menuVerificacao(arestas, vertices, direcionado);
-        break;
-    case 4: // Verificação de ciclo
-        cout << endl
-             << "--- Verificacao - O grafo possui ciclo? ---" << endl;
-        if (detectarCiclos(vertices, arestas))
-        {
-            cout << "Sim" << endl
-                 << endl;
-        }
-        else
-        {
-            cout << "Nao" << endl
-                 << endl;
-        }
-        menuVerificacao(arestas, vertices, direcionado);
-        break;
-    default:
-        cout << retornoValorInvalido() << endl;
-        break;
     }
 }
 
-void menuListagem(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
-{
-    int valueSubMenu;
-    menuListagem();
-    cout << retornoInsiraValor();
-    cin >> valueSubMenu;
-
-    switch (valueSubMenu)
-    {
-    case 0:
-        menuPrincipal();
-        cout << retornoInsiraValor();
-        int value;
-        cin >> value;
-        cin.ignore();
-        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
-        break;
-    case 1: // Componentes conexas
-        cout << endl
-             << "--- Listagem - Componentes Conexas ---" << endl;
-        cout << "Qtd. de componentes conexas: " << contarComponentesConexas(arestas, vertices) << endl
-             << endl;
-        break;
-    case 2: // Componentes fortemente conexas
-        cout << endl
-             << "--- Listagem - Componentes Fortemente Conexos ---" << endl;
-        cout << "Qtd. de componentes fortemente conexos: " << contarComponentesFortementeConexas(arestas, vertices) << endl;
-        break;
-    case 3: // Caminho Euleriano
-        cout << endl
-             << "--- Listagem - Caminho Euleriano ---" << endl;
-        // #TODO: Implementar
-        break;
-    case 4: // Caminho Hamiltoniano
-        cout << endl
-             << "--- Listagem - Caminho Hamiltoniano ---" << endl;
-        // #TODO: Implementar
-        break;
-    case 5: // Vértices de articulação
-        cout << endl
-             << "--- Listagem - Vértices de Articulação ---" << endl;
-        // #TODO: Implementar
-        break;
-    case 6: // Arestas ponte
-        cout << endl
-             << "--- Listagem - Arestas Ponte ---" << endl;
-        // #TODO: Implementar
-        break;
-    default:
-        cout << retornoValorInvalido() << endl;
-        break;
-    }
-}
-
-void menuConfiguracoes(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
-{
-    int valueSubMenu;
-    menuConfiguracoes();
-    cout << retornoInsiraValor();
-    cin >> valueSubMenu;
-
-    switch (valueSubMenu)
-    {
-    case 0:
-        menuPrincipal();
-        cout << retornoInsiraValor();
-        int value;
-        cin >> value;
-        cin.ignore();
-        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
-        break;
-    case 1: // Árvore de profundidade
-        cout << endl
-             << "--- Configuração - Árvore de Profundidade ---" << endl;
-        imprimirArvoreEmProfundidade(arestas, vertices[0]);
-        cout << endl << endl;
-        break;
-    case 2: // Árvore de largura
-        cout << endl
-             << "--- Configuração - Árvore de Largura ---" << endl;
-        imprimirArvoreEmLargura(arestas, vertices[0]);
-        cout << endl << endl;
-        break;
-    case 3: // Árvore geradora mínima
-        {cout << endl
-             << "--- Configuração - Árvore Geradora Mínima ---" << endl;
-        int valorMST = calcularMST(arestas, vertices);
-        cout << "Árvore geradora mínima gerada:" << endl;
-        cout << valorMST << endl
-             << endl;}
-        break;
-    case 4: // Ordem topológica - ajustar para que essa função só seja chamada em grafo nao direcionado
-        {cout << endl
-             << "--- Configuração - Ordem Topológica ---" << endl;
-        imprimirOrdenacaoTopologica(vertices, arestas, direcionado);
-        cout << endl << endl;
-
-        }break;
-    case 5: // Caminho mínimo entre dois vértices
-        {cout << endl
-             << "--- Configuração - Caminho Mínimo Entre Dois Vértices ---" << endl;
-        // #TODO: Implementar << endl << endl;
-        }break;
-    case 6: // Fluxo máximo
-        {cout << endl
-             << "--- Configuração - Fluxo Máximo ---" << endl;
-        // #TODO: Implementar << endl << endl;
-        }break;
-    case 7: // Fechamento transitivo
-        {cout << endl
-             << "--- Configuração - Fechamento Transitivo ---" << endl;
-        // #TODO: Implementar << endl << endl;
-        }break;
-    default:
-        {cout << retornoValorInvalido() << endl;
-        }break;
-    }
-}
-
-void navegacaoPaginaInicial(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
     switch (value)
     {
-    case 1: // Verificação
-        menuVerificacao(arestas, vertices, direcionado);
+    case 1: // Verificação -- Conexo
+        if (ehConexo(arestas, vertices))
+        {
+            cout << "1" << endl << endl;
+        }
+        else
+        {
+            cout << "0" << endl << endl;
+        }
         break;
-    case 2: // Listagem
-        menuListagem(arestas, vertices, direcionado);
+    case 2: // Verificação -- Bipartido
+        if (ehBipartido(arestas, vertices))
+        {
+            cout << "1" << endl << endl;
+        }
+        else
+        {
+            cout << "0" << endl << endl;
+        }
         break;
-    case 3: // Configuração
-        menuConfiguracoes(arestas, vertices, direcionado);
+    case 3: // Verificação -- Euleriano
+        if (ehEuleriano(arestas, vertices, direcionado))
+        {
+            cout << "1" << endl << endl;
+        }
+        else
+        {
+            cout << "0" << endl << endl;
+        }
         break;
-    default:
-        cout << retornoValorInvalido() << endl;
+    case 4: // Verificação -- Ciclo
+        if (detectarCiclos(vertices, arestas))
+        {
+            cout << "1" << endl << endl;
+        }
+        else
+        {
+            cout << "0" << endl << endl;
+        }
         break;
-    }
-}
 
-bool acessoSubPaginas(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
-{
-    if (validacaoOpcaoSelecionada(MENU_PRINCIPAL, value))
-    {
-        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
-        cout << retornoPaginaInicial() << endl
-             << endl;
-        return true;
-    }
-    else
-    {
-        cout << retornoValorInvalido() << endl
-             << endl;
-        return false;
+    case 5:{ // Listagem -- Componentes conexas
+        cout<< contarComponentesConexas(arestas, vertices) << endl << endl;
+        break;
+        }
+    case 6:{ // Listagem -- Componentes fortemente conexas
+        cout << contarComponentesFortementeConexas(arestas, vertices) << endl << endl;
+        break; }
+    case 7:{ // Listagem -- Vertices de articulação
+        break; }
+    case 8:{ // Arestas ponte
+        break; }
+    case 9: // Árvore de profundidade 
+        cout << imprimirArvoreEmProfundidade(arestas, vertices[0]) << endl << endl;
+        break;
+    case 10: // Árvore de largura 
+        cout << imprimirArvoreEmLargura(arestas, vertices[0]) << endl << endl;
+        break;
+    case 11:{ // Árvore geradora mínima
+        int valorMST = calcularMST(arestas, vertices);
+        cout << valorMST << endl << endl;
+        break; }
+    case 12: // Ordem topológica - apenas grafo nao direcionado
+        cout << imprimirOrdenacaoTopologica(vertices, arestas, direcionado) << endl << endl;
+        break;
+    case 13:{ // Caminho mínimo entre dois vértices
+        break; }
+    case 14:{ // Fluxo máximo
+        break; }
+    case 15:{ // Fechamento transitivo
+        break; }
+    default:
+        break;
     }
 }
 
 // # MENU - EXECUÇÃO
-void executarMenu() // #TODO: Corrigir execução - na segunda consulta, não funciona corretamente
+void executarMenu()
 {
     int value;
     bool direcionado;
-    bool encerrarPrograma = false;
     vector<Aresta> arestas;
     vector<string> vertices;
 
     boasVindas();
     leituraGrafo();
 
-    menuPrincipal();
+    menu();
     cout << retornoInsiraValor();
     cin >> value;
     cin.ignore();
 
-    while (encerrarPrograma == false)
-    {
-        if (acessoSubPaginas(value, arestas, vertices, direcionado) == true) // #TODO: No submenu, ao inserir valor inválido, entra em loop
-        {
+    while (value != 0) {
+        if ((validacaoOpcaoSelecionada(value)) == true){
+        navegacaoMenu(value, arestas, vertices, direcionado);
 
-            cout << retornoInsiraValor();
-            cin >> value;
-            cin.ignore();
-
-            if (value == 0)
-            {
-                executarMenu();
-            }
-            else
-            {
-                navegacaoPaginaInicial(value, arestas, vertices, direcionado); // #TODO: No submenu, ao inserir para voltar para a página inicial, o programa reinicia ao invés de voltar para o menu inicial de grafos
-            }
-        }
-        else
-        {
-            executarMenu();
-        }
+        menu();
+        cout << retornoInsiraValor();
+        cin >> value;
+        cin.ignore();
     }
+    if (value == 0){
+        navegacaoMenu(value);
+    }
+    
 }
 
 int main()
