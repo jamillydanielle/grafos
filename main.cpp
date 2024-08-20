@@ -8,15 +8,12 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------
 // # MENU - MENSAGENS
+// ----------------------------------------------------------------
 string retornoInsiraValor()
 {
     return "> Insira o valor: ";
-}
-
-string retornoPaginaInicial()
-{
-    return "* Digite (0) para voltar para a pagina inicial";
 }
 
 string retornoValorInvalido()
@@ -24,7 +21,14 @@ string retornoValorInvalido()
     return "Valor invalido, tente novamente.";
 }
 
-// # CONFIGURAÇÕES DE GRAFOS - GERAIS
+string retornoEncerrarPrograma()
+{
+    return "> Insira 0 para encerrar o programa";
+}
+
+// ----------------------------------------------------------------
+// # CONFIGURAÇÕES GERAIS/ VALIDAÇÕES DE ENTRADAS
+// ----------------------------------------------------------------
 struct Aresta
 {
     int id;
@@ -35,11 +39,8 @@ struct Aresta
 
 void boasVindas()
 {
-    cout << "[ Boas vindas! ]" << endl
-         << endl;
-    cout << "* Este e um programa de analise de propriedades de grafos..." << endl
-         << endl;
-
+    cout << "[ Boas vindas! ]" << endl << endl;
+    cout << "* Este e um programa de analise de propriedades de grafos..." << endl<< endl;
     cout << "--------------------------------------------" << endl;
     cout << "Trabalho desenvolvido por:" << endl;
     cout << "--------------------------------------------" << endl;
@@ -47,11 +48,7 @@ void boasVindas()
     cout << "Ingrid de Falchi" << endl;
     cout << "Jamilly Danielle" << endl;
     cout << "--------------------------------------------" << endl;
-
-    cout << endl
-         << "Vamos iniciar! ..." << endl
-         << endl
-         << endl;
+    cout << endl << "Vamos iniciar! ..." << endl << endl << endl;
 }
 
 bool validarEntrada(const string &valor, const string &tipoValidacao)
@@ -223,8 +220,7 @@ void leituraGrafo()
     int numVertices, numArestas;
     string tipoGrafo;
 
-    cout << "[ Qtd. Vertices e Arestas ]" << endl
-         << endl;
+    cout << "[ Qtd. Vertices e Arestas ]" << endl << endl;
     cout << "* Insira a qtd. de Vertices e Arestas" << endl;
 
     solicitarVerticesEArestas(numVertices, numArestas);
@@ -232,13 +228,10 @@ void leituraGrafo()
     vector<Aresta> arestas(numArestas);
     vector<string> vertices(numVertices);
 
-    cout << endl
-         << endl;
+    cout << endl << endl;
 
-    cout << "[ Tipo Grafo ]" << endl
-         << endl;
-    cout << "* Selecione o Num. da opcao desejada:" << endl
-         << endl;
+    cout << "[ Tipo Grafo ]" << endl << endl;
+    cout << "* Selecione o Num. da opcao desejada:" << endl << endl;
     cout << "--------------------------------------------" << endl;
     cout << "Valor               |   Tipo" << endl;
     cout << "--------------------------------------------" << endl;
@@ -247,61 +240,29 @@ void leituraGrafo()
     cout << "--------------------------------------------" << endl;
     tipoGrafo = solicitarValor("tipoGrafo");
 
-    cout << endl
-         << endl;
+    cout << endl << endl;
 
-    cout << "[ Config. Arestas ]" << endl
-         << endl;
-    cout << "* Insira as arestas no formato: id_aresta u v p"
-         << endl
+    cout << "[ Config. Arestas ]" << endl << endl;
+    cout << "* Insira as arestas no formato: id_aresta u v p" << endl
          << "--- Ex.: 0 a b 5 ---" << endl;
     cout << "--------------------------------------------" << endl
          << endl;
     insiraArestas(arestas, vertices, numArestas);
 }
 
+// ----------------------------------------------------------------
 // # MENU - LISTAGEM DE OPÇÕES
-enum Menu
+// ----------------------------------------------------------------
+int qntOpcoesMenu()
 {
-    MENU_PRINCIPAL,
-    MENU_VERIFICACAO,
-    MENU_LISTAGEM,
-    MENU_CONFIGURACOES
-};
-
-int qntOpcoes(Menu menu)
-{
-    int XOpcoes = 0;
-
-    switch (menu)
-    {
-    case MENU_PRINCIPAL:
-        XOpcoes = 3;
-        break;
-    case MENU_VERIFICACAO:
-        XOpcoes = 4;
-        break;
-    case MENU_LISTAGEM:
-        XOpcoes = 6;
-        break;
-    case MENU_CONFIGURACOES:
-        XOpcoes = 7;
-        break;
-    default:
-        break;
-    }
-    return XOpcoes;
+    return 13;
 }
 
-bool validacaoOpcaoSelecionada(Menu menu, int value)
+bool validacaoOpcaoSelecionada(int value)
 {
     bool valid = false;
 
-    if (menu == MENU_PRINCIPAL and (value > qntOpcoes(menu) or value < 1))
-    {
-        retornoValorInvalido();
-    }
-    else if (menu != MENU_PRINCIPAL and (value > qntOpcoes(menu)))
+    if (value > qntOpcoesMenu() or value <= 0)
     {
         retornoValorInvalido();
     }
@@ -313,88 +274,38 @@ bool validacaoOpcaoSelecionada(Menu menu, int value)
     return valid;
 }
 
-void menuPrincipal()
-{
-    cout << "" << endl
-         << "[ Menu principal ]" << endl
-         << endl;
-    cout << "* Selecione o Num. da opcao desejada:" << endl
-         << endl;
-    cout << "--------------------------------" << endl;
-    cout << "Num. |   Secao" << endl;
-    cout << "--------------------------------" << endl;
-    cout << "1    |   Verificacao" << endl;
-    cout << "2    |   Listagem" << endl;
-    cout << "3    |   Gerar configuracoes" << endl;
-    cout << "--------------------------------" << endl
-         << endl;
-}
-
-void menuVerificacao()
+void menu()
 {
     cout << "" << endl
          << "[ Analise de Grafo ]" << endl
          << endl;
     cout << "* Selecione o Num. da opcao desejada:" << endl
          << endl;
-    cout << "--------------------------------" << endl;
-    cout << "Num. |   Tipo de verificacao" << endl;
-    cout << "--------------------------------" << endl;
-    cout << "1    |   cod. ref.: 1. |   Conexo" << endl;
-    cout << "2    |   cod. ref.: 2. |   Bipartido" << endl;
-    cout << "3    |   cod. ref.: 3. |   Euleriano" << endl;
-    cout << "4    |   cod. ref.: 4. |   Possui ciclo" << endl;
-    cout << "--------------------------------" << endl
-         << endl;
-    cout << retornoPaginaInicial() << endl
-         << endl;
+    cout << "-------------------------------------------------------------------------------------------------" << endl;
+    cout << "Num. |   Tipo                 |   Funcao" << endl;
+    cout << "-------------------------------------------------------------------------------------------------" << endl;
+    cout << "1    |   Verificacao          |   Conexo" << endl;
+    cout << "2    |   Verificacao          |   Bipartido" << endl;
+    cout << "3    |   Verificacao          |   Eureliano" << endl;
+    cout << "3    |   Verificacao          |   Possui ciclo" << endl;
+    cout << "1    |   Listagem             |   Quantidade de Componentes conexas" << endl;
+    cout << "2    |   Listagem             |   Quantidade de Componentes fortemente conexas" << endl;
+    cout << "3    |   Listagem             |   Vertices de Articulacao" << endl;
+    cout << "4    |   Listagem             |   Quantidade de Arestas Ponte" << endl;
+    cout << "4    |   Configuracao         |   Arvore de profundidade" << endl;
+    cout << "2    |   Configuracao         |   Arvore de largura" << endl;
+    cout << "3    |   Configuracao         |   Arvore geradora minima" << endl;
+    cout << "4    |   Configuracao         |   Ordem topologia" << endl;
+    cout << "5    |   Configuracao         |   Caminho minimo entre dois vertices" << endl;
+    cout << "6    |   Configuracao         |   Fluxo maximo" << endl;
+    cout << "7    |   Configuracao         |   Fechamento transitivo" << endl;
+    cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
+    cout << retornoEncerrarPrograma() << endl << endl;
 }
 
-void menuListagem()
-{
-    cout << "" << endl
-         << "[ Listagem de atributos ]" << endl
-         << endl;
-    cout << "* Selecione o Num. da opcao desejada:" << endl
-         << endl;
-    cout << "--------------------------------" << endl;
-    cout << "Num. |   Tipo de listagem" << endl;
-    cout << "--------------------------------" << endl;
-    cout << "1    |   cod. ref.: 5. |   Quantidade de Componentes conexas" << endl;
-    cout << "2    |   cod. ref.: 6. |   Quantidade de Componentes fortemente conexas" << endl;
-    cout << "3    |   cod. ref.: 7. |   Vertices de Articulacao" << endl;
-    cout << "4    |   cod. ref.: 8. |   Quantidade de Arestas Ponte" << endl;
-    cout << "--------------------------------" << endl
-         << endl;
-    cout << retornoPaginaInicial() << endl
-         << endl;
-}
-
-void menuConfiguracoes()
-{
-    cout << "" << endl
-         << "[ Gerar configuracoes ]" << endl
-         << endl;
-    cout << "* Selecione o Num. da opcao desejada:" << endl
-         << endl;
-    cout << "--------------------------------" << endl;
-    cout << "Num. |   Tipo de configuracao" << endl;
-    cout << "--------------------------------" << endl;
-    cout << "1    |   cod. ref.: 11. |   Arvore de profundidade" << endl;
-    cout << "2    |   cod. ref.: 12. |   Arvore de largura" << endl;
-    cout << "3    |   cod. ref.: 13. |   Arvore geradora minima" << endl;
-    cout << "4    |   cod. ref.: 14. |   Ordem topologia" << endl;
-    cout << "5    |   cod. ref.: 15. |   Caminho minimo entre dois vertices" << endl;
-    cout << "6    |   cod. ref.: 16. |   Fluxo maximo" << endl;
-    cout << "7    |   cod. ref.: 17. |   Fechamento transitivo" << endl;
-    cout << "--------------------------------" << endl
-         << endl;
-    cout << retornoPaginaInicial() << endl
-         << endl;
-}
-
-// # MENU - VERIFICAÇÕES
-
+// ----------------------------------------------------------------
+// # MENU - FUNÇÕES/ ANÁLISES GRAFO
+// ----------------------------------------------------------------
 // Verificar se um grafo é conexo (para o caso de grafos orientados, verificar conectividade fraca.)
 //  Função para verificar se um grafo é conexo
 //  Retorna true se o grafo for conexo, false caso contrário
@@ -1241,38 +1152,25 @@ void imprimirOrdenacaoTopologica(const vector<string> &vertices, const vector<Ar
     }
 }
 
+// ----------------------------------------------------------------
 // # MENU - NAVEGAÇÕES
+// ----------------------------------------------------------------
 
-void navegacaoPaginaInicial(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado);
-
-void menuVerificacao(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
-    int valueSubMenu;
-    menuVerificacao();
-    cout << retornoInsiraValor();
-    cin >> valueSubMenu;
-
-    switch (valueSubMenu)
+    switch (value)
     {
-    case 0:
-        menuPrincipal();
-        cout << retornoInsiraValor();
-        int value;
-        cin >> value;
-        cin.ignore();
-        navegacaoPaginaInicial(value, arestas, vertices, direcionado);
-        break;
+    case 0:{
+        break;}
     case 1: // Verificação de grafo conexo
-        cout << endl
-             << "--- Verificacao - Grafo conexo? ---" << endl;
         if (ehConexo(arestas, vertices))
         {
-            cout << "Sim" << endl
+            cout << "1" << endl
                  << endl;
         }
         else
         {
-            cout << "Nao" << endl
+            cout << "0" << endl
                  << endl;
         }
         menuVerificacao(arestas, vertices, direcionado);
