@@ -1289,6 +1289,85 @@ void calcularCaminhoMinimo(const vector<Aresta> &arestas, const vector<string> &
         cout << -1 << endl;
     }
 }
+// Função auxiliar para realizar uma busca em largura (BFS) para encontrar um caminho aumentante
+bool bfsFluxoMaximo(const map<string, map<string, int>> &grafico, const string &origem, const string &destino,
+         map<string, string> &predecessor, map<string, map<string, int>> &capacidadeResidual) {
+    map<string, bool> visitado;
+    queue<string> fila;
+    
+    // Inicializa a BFS
+    fila.push(origem);
+    visitado[origem] = true;
+    predecessor[origem] = "";
+
+    while (!fila.empty()) {
+        string u = fila.front();
+        fila.pop();
+
+        // Explora todos os vizinhos de u
+        for (const auto &vizinho : grafico.at(u)) {
+            string v = vizinho.first;
+            int capacidade = capacidadeResidual[u][v];
+
+            if (!visitado[v] && capacidade > 0) {
+                // Se o vizinho não foi visitado e há capacidade residual
+                visitado[v] = true;
+                predecessor[v] = u;
+                fila.push(v);
+
+                if (v == destino) {
+                    return true; // Encontrou o destino
+                }
+            }
+        }
+    }
+
+    return false; // Não encontrou um caminho aumentante
+}
+
+// Função para calcular o fluxo máximo usando o algoritmo de Ford-Fulkerson
+int fluxoMaximo(const vector<Aresta> &arestas, const vector<string> &vertices) {
+    // Cria o grafo e inicializa a capacidade residual
+    map<string, map<string, int>> grafico;
+    map<string, map<string, int>> capacidadeResidual;
+
+    for (const auto &aresta : arestas) {
+        grafico[aresta.origem][aresta.destino] = aresta.peso;
+        capacidadeResidual[aresta.origem][aresta.destino] = aresta.peso;
+        capacidadeResidual[aresta.destino][aresta.origem] = 0; // Inicializa a aresta reversa com capacidade 0
+    }
+
+    string origem = vertices[0];
+    string destino = vertices[vertices.size() - 1];
+
+    int fluxoMaximo = 0;
+    map<string, string> predecessor;
+
+    while (bfsFluxoMaximo(grafico, origem, destino, predecessor, capacidadeResidual)) {
+        // Encontrar o fluxo máximo do caminho aumentante
+        int fluxoCaminho = numeric_limits<int>::max();
+        string v = destino;
+
+        while (v != origem) {
+            string u = predecessor[v];
+            fluxoCaminho = min(fluxoCaminho, capacidadeResidual[u][v]);
+            v = u;
+        }
+
+        // Atualizar as capacidades residuais
+        v = destino;
+        while (v != origem) {
+            string u = predecessor[v];
+            capacidadeResidual[u][v] -= fluxoCaminho;
+            capacidadeResidual[v][u] += fluxoCaminho;
+            v = u;
+        }
+
+        fluxoMaximo += fluxoCaminho;
+    }
+
+    return fluxoMaximo;
+}
 
 // ----------------------------------------------------------------
 // # MENU - NAVEGAÇÕES
@@ -1297,7 +1376,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
 {
     switch (value)
     {
-    case 0: // Verificação -- Conexo
+    case 0:{ // Verificação -- Conexo
         if (ehConexo(arestas, vertices))
         {
             cout << 1 << endl;
@@ -1306,8 +1385,8 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         {
             cout << 0 << endl;
         }
-        break;
-    case 1: // Verificação -- Bipartido
+        break;}
+    case 1: {// Verificação -- Bipartido
         if(direcionado){
             cout << -1 << endl;
         }
@@ -1319,8 +1398,8 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         {
             cout << 0 << endl;
         }
-        break;
-    case 2: // Verificação -- Euleriano
+        break;}
+    case 2:{ // Verificação -- Euleriano
         if (ehEuleriano(arestas, vertices, direcionado))
         {
             cout << 1 << endl;
@@ -1329,8 +1408,8 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         {
             cout << 0 << endl;
         }
-        break;
-    case 3: // Verificação -- Ciclo
+        break;}
+    case 3:{ // Verificação -- Ciclo
        if (detectarCiclos(vertices, arestas, direcionado))
         {
             cout << 1 << endl;
@@ -1339,7 +1418,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         {
             cout << 0 << endl;
         }
-        break;
+        break;}
 
     case 4:{ // Listagem -- Componentes conexas
         if(direcionado){
@@ -1378,14 +1457,14 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         }
         break;
         }    
-    case 8: // Árvore de profundidade 
+    case 8:{ // Árvore de profundidade 
         imprimirArvoreEmProfundidade(arestas, vertices[0]);
         cout << endl;
-        break;
-    case 9: // Árvore de largura 
+        break;}
+    case 9:{ // Árvore de largura 
         imprimirArvoreEmLargura(arestas, vertices[0]);
         cout << endl;
-        break;
+        break;}
     case 10:{ // Árvore geradora mínima
         if(direcionado){
             cout << -1;
@@ -1395,16 +1474,20 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         }
         break; 
         }
-    case 11: // Ordem topológica - apenas grafo nao direcionado
+    case 11:{ // Ordem topológica - apenas grafo nao direcionado
         imprimirOrdenacaoTopologica(vertices, arestas, direcionado);
         cout << endl;
-        break;
+        break;}
     case 12:{ // Caminho mínimo entre dois vértices
         calcularCaminhoMinimo(arestas,vertices);
         cout << endl;
         break; }
     case 13:{ // Fluxo máximo
-        cout << "#TODO - Implementar" << endl;
+        if(!direcionado){
+            cout << -1 << endl;
+        }else{
+            cout << fluxoMaximo(arestas, vertices) << endl;
+        }
         break; }
     case 14:{ // Fechamento transitivo
         cout << "#TODO - Implementar" << endl;
