@@ -295,7 +295,6 @@ void menu()
     cout << "14   |   Configuracao   |   Fluxo maximo" << endl;
     cout << "15   |   Configuracao   |   Fechamento transitivo" << endl;
     cout << "--------------------------------------------------------------------------------" << endl << endl;
-    cout << retornoEncerrarPrograma() << endl << endl;
 }
 
 // ----------------------------------------------------------------
@@ -1167,11 +1166,11 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
     case 1: // Verificação -- Bipartido
         if (ehBipartido(arestas, vertices))
         {
-            cout << 1 << endl;
+            cout << "1" << endl;
         }
         else
         {
-            cout << 0 << endl;
+            cout << "0" << endl;
         }
         break;
     case 2: // Verificação -- Euleriano
@@ -1268,10 +1267,9 @@ void executarMenu(){
 
     // Executar as opções válidas
     for (int val : values) {
-        if (val != 0) {
-            navegacaoMenu(val, arestas, vertices, direcionado);
-        }
+        navegacaoMenu(val, arestas, vertices, direcionado);
     }
+    
     
 }
 
