@@ -303,55 +303,94 @@ void menu()
 // Verificar se um grafo é conexo (para o caso de grafos orientados, verificar conectividade fraca.)
 //  Função para verificar se um grafo é conexo
 //  Retorna true se o grafo for conexo, false caso contrário
-bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices)
+// Função para realizar busca em largura (BFS)
+void bfsConexo(const map<string, vector<string>> &adjacencia, const string &start, set<string> &visitados)
 {
-    // Cria um mapa de adjacência para representar o grafo
-    map<string, vector<string>> adjacencia;
-    for (const auto &aresta : arestas)
-    {
-        adjacencia[aresta.origem].push_back(aresta.destino);
-        adjacencia[aresta.destino].push_back(aresta.origem); // Adiciona a aresta na direção oposta para grafos não direcionados
-    }
-
-    if (vertices.empty())
-    {
-        return true; // Um grafo vazio é considerado conexo por definição
-    }
-
-    set<string> visitados; // Conjunto para rastrear vértices visitados
-    queue<string> fila;    // Fila para realizar a busca em largura (BFS)
-
-    // Inicia a BFS com o primeiro vértice da lista
-    fila.push(vertices[0]);
-    visitados.insert(vertices[0]);
+    queue<string> fila;
+    fila.push(start);
+    visitados.insert(start);
 
     while (!fila.empty())
     {
         string u = fila.front();
         fila.pop();
 
-        // Explora todos os vizinhos do vértice atual
-        for (const auto &v : adjacencia[u])
+        for (const auto &v : adjacencia.at(u))
         {
             if (visitados.find(v) == visitados.end())
             {
                 visitados.insert(v);
-                fila.push(v); // Adiciona o vizinho à fila para explorar posteriormente
+                fila.push(v);
             }
         }
     }
+}
 
-    // Verifica se todos os vértices foram visitados
-    for (const auto &vertice : vertices)
+// Verifica se o grafo é conexo (não direcionado) ou conexo fraco (direcionado)
+bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
+{
+    // Cria o mapa de adjacência para o grafo
+    map<string, vector<string>> adjacencia;
+    for (const auto &aresta : arestas)
     {
-        if (visitados.find(vertice) == visitados.end())
+        adjacencia[aresta.origem].push_back(aresta.destino);
+        if (!direcionado)
         {
-            return false; // Se algum vértice não foi visitado, o grafo é desconexo
+            adjacencia[aresta.destino].push_back(aresta.origem); // Adiciona a aresta na direção oposta para grafos não direcionados
         }
     }
 
-    return true; // Todos os vértices foram visitados, então o grafo é conexo
+    // Verifica se o grafo é conexo não direcionado
+    if (!direcionado)
+    {
+        if (vertices.empty())
+        {
+            return true; // Um grafo vazio é considerado conexo por definição
+        }
+
+        set<string> visitados;
+        bfsConexo(adjacencia, vertices[0], visitados);
+
+        for (const auto &vertice : vertices)
+        {
+            if (visitados.find(vertice) == visitados.end())
+            {
+                return false; // Se algum vértice não foi visitado, o grafo é desconexo
+            }
+        }
+
+        return true; // Todos os vértices foram visitados, então o grafo é conexo
+    }
+    else
+    {
+        // Verifica conectividade fraca para grafos direcionados
+        if (vertices.empty())
+        {
+            return true; // Um grafo vazio é considerado conexo por definição
+        }
+
+        // Construa o grafo de forma não direcionada para verificar a conectividade fraca
+        map<string, vector<string>> adjacenciaNaoDirecionada = adjacencia;
+        for (const auto &aresta : arestas)
+        {
+            adjacenciaNaoDirecionada[aresta.destino].push_back(aresta.origem); // Adiciona a aresta na direção oposta
+        }
+
+        set<string> visitados;
+        bfsConexo(adjacenciaNaoDirecionada, vertices[0], visitados);
+
+        for (const auto &vertice : vertices)
+        {
+            if (visitados.find(vertice) == visitados.end())
+            {
+                return false; // Se algum vértice não foi visitado, o grafo é desconexo
+            }
+        }
+
+        return true; // O grafo é fraco conexo
+    }
 }
+
 
 // 2. Verificar se um grafo não-orientado é bipartido.
 
@@ -415,7 +454,7 @@ bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
 bool ehEuleriano(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
     // Verifica se o grafo é conexo (aplicável apenas a grafos não direcionados)
-    if (!ehConexo(arestas, vertices))
+    if (!ehConexo(arestas, vertices, direcionado))
     {
         return false; // O grafo deve ser conexo para ser euleriano
     }
@@ -789,7 +828,6 @@ void imprimirArticulacoes(const vector<Aresta> &arestas, const vector<string> &v
     sort(articulacoesOrdenadas.begin(), articulacoesOrdenadas.end());
 
     // Imprime os vértices de articulação ordenados
-    cout << "Vértices de articulação: ";
     for (const auto &articulacao : articulacoesOrdenadas)
     {
         cout << articulacao << " ";
@@ -868,7 +906,7 @@ void dfsImprimirArvore(const string &vertice, const map<string, vector<string>> 
 }
 
 // Função para imprimir a árvore em profundidade
-void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &raiz)
+void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &raiz, bool direcionado)
 {
     map<string, vector<string>> adjacencia;
     map<pair<string, string>, int> idAresta;
@@ -906,7 +944,7 @@ void imprimirArvoreEmProfundidade(const vector<Aresta> &arestas, const string &r
             vertices.push_back(aresta.destino);
         }
     }
-    bool conexo = ehConexo(arestas, vertices);
+    bool conexo = ehConexo(arestas, vertices, direcionado);
 
     cout << "Árvore em profundidade (DFS Tree):" << endl;
     if (conexo || raiz == "0")
@@ -972,7 +1010,7 @@ void bfsImprimirArvore(const string &raiz, const map<string, vector<string>> &ad
 }
 
 
-void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz)
+void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz, bool direcionado)
 {
     map<string, vector<string>> adjacencia;
     map<pair<string, string>, int> idAresta;
@@ -1010,7 +1048,7 @@ void imprimirArvoreEmLargura(const vector<Aresta> &arestas, const string &raiz)
             vertices.push_back(aresta.destino);
         }
     }
-    bool conexo = ehConexo(arestas, vertices);
+    bool conexo = ehConexo(arestas, vertices, direcionado);
 
     cout << "Árvore em largura (BFS Tree):" << endl;
     if (conexo || raiz == "0")
@@ -1377,7 +1415,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
     switch (value)
     {
     case 0:{ // Verificação -- Conexo
-        if (ehConexo(arestas, vertices))
+        if (ehConexo(arestas, vertices, direcionado))
         {
             cout << 1 << endl;
         }
@@ -1458,11 +1496,11 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         break;
         }    
     case 8:{ // Árvore de profundidade 
-        imprimirArvoreEmProfundidade(arestas, vertices[0]);
+        imprimirArvoreEmProfundidade(arestas, vertices[0], direcionado);
         cout << endl;
         break;}
     case 9:{ // Árvore de largura 
-        imprimirArvoreEmLargura(arestas, vertices[0]);
+        imprimirArvoreEmLargura(arestas, vertices[0], direcionado);
         cout << endl;
         break;}
     case 10:{ // Árvore geradora mínima
