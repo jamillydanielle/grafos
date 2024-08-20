@@ -357,8 +357,13 @@ bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices)
 
 // Função para verificar se um grafo é bipartido
 // Retorna true se o grafo for bipartido, false caso contrário
-bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
+bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
+    if (direcionado) {
+        // Grafos direcionados não podem ser bipartidos por esta implementação
+        return false;
+    }
+
     // Cria um mapa de adjacência para representar o grafo
     map<string, vector<string>> adjacencia;
     for (const auto &aresta : arestas)
@@ -393,19 +398,18 @@ bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
                 for (const auto &v : adjacencia[u])
                 {
                     if (cor[v] == -1)
-                    {                        // Se o vizinho não foi colorido
+                    { // Se o vizinho não foi colorido
                         cor[v] = 1 - cor[u]; // Colore com a cor oposta à de u
                         fila.push(v);
                     }
                     else if (cor[v] == cor[u])
-                    {                 // Se o vizinho tem a mesma cor que u
+                    { // Se o vizinho tem a mesma cor que u
                         return false; // O grafo não é bipartido
                     }
                 }
             }
         }
     }
-
     return true; // Todos os vértices foram coloridos corretamente, o grafo é bipartido
 }
 
@@ -1164,7 +1168,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         }
         break;
     case 1: // Verificação -- Bipartido
-        if (ehBipartido(arestas, vertices))
+        if (ehBipartido(arestas, vertices, direcionado))
         {
             cout << "1" << endl;
         }
