@@ -1219,8 +1219,10 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         cout << contarComponentesFortementeConexas(arestas, vertices) << endl << endl;
         break; }
     case 7:{ // Listagem -- Vertices de articulação
+        cout << "#TODO - Implementar";
         break; }
     case 8:{ // Arestas ponte
+        cout << "#TODO - Implementar";
         break; }
     case 9: // Árvore de profundidade 
         imprimirArvoreEmProfundidade(arestas, vertices[0]);
@@ -1239,10 +1241,13 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         cout << endl << endl;
         break;
     case 13:{ // Caminho mínimo entre dois vértices
+        cout << "#TODO - Implementar";
         break; }
     case 14:{ // Fluxo máximo
+        cout << "#TODO - Implementar";
         break; }
     case 15:{ // Fechamento transitivo
+        cout << "#TODO - Implementar";
         break; }
     default:
         break;
