@@ -341,9 +341,18 @@ bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices, boo
         }
     }
 
+    // Adiciona vértices isolados ao mapa de adjacência
+    for (const auto &vertice : vertices)
+    {
+        if (adjacencia.find(vertice) == adjacencia.end())
+        {
+            adjacencia[vertice] = {}; // Inicializa o vetor de adjacências para o vértice isolado
+        }
+    }
+
     if (vertices.empty())
     {
-        return true; // Um grafo vazio é considerado conexo por definição
+        return false; // Um grafo vazio geralmente não é considerado conexo
     }
 
     // Verifica a conectividade no grafo
@@ -369,6 +378,15 @@ bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices, boo
             adjacenciaInvertida[aresta.destino].push_back(aresta.origem);
         }
 
+        // Adiciona vértices isolados ao mapa de adjacência invertido
+        for (const auto &vertice : vertices)
+        {
+            if (adjacenciaInvertida.find(vertice) == adjacenciaInvertida.end())
+            {
+                adjacenciaInvertida[vertice] = {}; // Inicializa o vetor de adjacências para o vértice isolado
+            }
+        }
+
         // Verifica a conectividade no grafo invertido
         set<string> visitadosInvertidos;
         bfsConexo(adjacenciaInvertida, vertices[0], visitadosInvertidos);
@@ -385,7 +403,6 @@ bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices, boo
 
     return true; // Todos os vértices foram visitados, então o grafo é conexo
 }
-
 // 2. Verificar se um grafo não-orientado é bipartido.
 
 // Função para verificar se um grafo é bipartido
