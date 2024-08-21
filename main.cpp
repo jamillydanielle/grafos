@@ -147,24 +147,23 @@ string solicitarValor(const string &tipoValidacao)
 
 void insiraArestas(vector<Aresta> &arestas, vector<string> &vertices, int numArestas)
 {
-    int id;
-    string u, v;
-    float p;
-    int i = 0;
-    while(i < numArestas){
-        cin >> id >> u >> v >> p;
+    int id, origem, destino, peso;
+    set<string> verticesSet;  // Use um conjunto para evitar duplicatas
 
-        arestas.add(Aresta{id, u, v, p});
-        if (find(vertices.begin(), vertices.end(), u) == vertices.end())
-        {
-            vertices.add(u); // Verificar se este vértice já existe, se existir não dá entrada nele
-        }
-        if (find(vertices.begin(), vertices.end(), v) == vertices.end())
-        {
-            vertices.add(v); // Verificar se este vértice já existe, se existir não dá entrada nele
-        }
-        i++;
+    for (int i = 0; i < numArestas; ++i)
+    {
+        cin >> id >> origem >> destino >> peso;
+        // arestas[i].id = to_string(id); // Armazena o ID como string ## Estava gerando erro
+        arestas[i].id;
+        arestas[i].origem = to_string(origem);
+        arestas[i].destino = to_string(destino);
+        arestas[i].peso = peso;
+        verticesSet.insert(arestas[i].origem);
+        verticesSet.insert(arestas[i].destino);
     }
+
+    // Converte o conjunto de vértices em vetor
+    vertices.assign(verticesSet.begin(), verticesSet.end());
 }
 
 void leituraGrafo()
@@ -245,7 +244,7 @@ void menu()
     cout << "6    |   Listagem       |   Vertices de Articulacao" << endl;
     cout << "7    |   Listagem       |   Quantidade de Arestas Ponte" << endl;
     cout << "8    |   Configuracao   |   Arvore de profundidade" << endl;
-    cout << "9    |   Configuracao    |   Arvore de largura" << endl;
+    cout << "9    |   Configuracao   |   Arvore de largura" << endl;
     cout << "10   |   Configuracao   |   Arvore geradora minima" << endl;
     cout << "11   |   Configuracao   |   Ordem topologia" << endl;
     cout << "12   |   Configuracao   |   Caminho minimo entre dois vertices" << endl;
@@ -287,85 +286,76 @@ void bfsConexo(const map<string, vector<string>> &adjacencia, const string &inic
 // Função para verificar se o grafo é conexo (para grafos não direcionados) ou se é conexo fracamente (para grafos direcionados)
 bool ehConexo(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
-    // Cria o mapa de adjacência para o grafo
     map<string, vector<string>> adjacencia;
+    map<string, vector<string>> adjacenciaInvertida;
+
+    // Inicializa os vértices nos mapas de adjacência
+    for (const auto &vertice : vertices)
+    {
+        adjacencia[vertice] = vector<string>();
+        adjacenciaInvertida[vertice] = vector<string>();
+    }
+
+    // Adiciona as arestas aos mapas de adjacência
     for (const auto &aresta : arestas)
     {
         adjacencia[aresta.origem].push_back(aresta.destino);
+        adjacenciaInvertida[aresta.destino].push_back(aresta.origem);
+
         if (!direcionado)
         {
-            adjacencia[aresta.destino].push_back(aresta.origem); // Adiciona a aresta na direção oposta para grafos não direcionados
-        }
-    }
-
-    // Adiciona vértices isolados ao mapa de adjacência
-    for (const auto &vertice : vertices)
-    {
-        if (adjacencia.find(vertice) == adjacencia.end())
-        {
-            adjacencia[vertice] = {}; // Inicializa o vetor de adjacências para o vértice isolado
+            adjacencia[aresta.destino].push_back(aresta.origem);
+            adjacenciaInvertida[aresta.origem].push_back(aresta.destino);
         }
     }
 
     if (vertices.empty())
     {
-        return false; // Um grafo vazio geralmente não é considerado conexo
+        return false;
     }
 
-    // Verifica a conectividade no grafo
+    // Verificação de conexidade no grafo original
     set<string> visitados;
     bfsConexo(adjacencia, vertices[0], visitados);
 
-    // Verifica se todos os vértices foram visitados
     for (const auto &vertice : vertices)
     {
         if (visitados.find(vertice) == visitados.end())
         {
-            return false; // Se algum vértice não foi visitado, o grafo é desconexo
+            return false;  // Se algum vértice não foi visitado, o grafo não é conexo
         }
     }
 
-    // Para grafos direcionados, também precisa verificar a conectividade fraca
+    // Se o grafo é direcionado, verificação da conexidade no grafo invertido
     if (direcionado)
     {
-        // Cria o mapa de adjacência invertido para o grafo direcionado
-        map<string, vector<string>> adjacenciaInvertida;
-        for (const auto &aresta : arestas)
-        {
-            adjacenciaInvertida[aresta.destino].push_back(aresta.origem);
-        }
-
-        // Adiciona vértices isolados ao mapa de adjacência invertido
-        for (const auto &vertice : vertices)
-        {
-            if (adjacenciaInvertida.find(vertice) == adjacenciaInvertida.end())
-            {
-                adjacenciaInvertida[vertice] = {}; // Inicializa o vetor de adjacências para o vértice isolado
-            }
-        }
-
-        // Verifica a conectividade no grafo invertido
         set<string> visitadosInvertidos;
         bfsConexo(adjacenciaInvertida, vertices[0], visitadosInvertidos);
 
-        // Verifica se todos os vértices foram visitados no grafo invertido
         for (const auto &vertice : vertices)
         {
             if (visitadosInvertidos.find(vertice) == visitadosInvertidos.end())
             {
-                return false; // Se algum vértice não foi visitado, o grafo é desconexo
+                return false;  // Se algum vértice não foi visitado no grafo invertido, o grafo não é fortemente conexo
             }
         }
     }
-    return true; // O grafo é fraco conexo
+
+    return true;
 }
 
 // 2. Verificar se um grafo não-orientado é bipartido.
 
 // Função para verificar se um grafo é bipartido
 // Retorna true se o grafo for bipartido, false caso contrário
-bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
+bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices, bool direcionado)
 {
+    // Se o grafo for direcionado, retornamos 0 diretamente, pois bipartição não se aplica
+    if (direcionado)
+    {
+        return 0; // Bipartição não se aplica a grafos direcionados
+    }
+
     // Cria um mapa de adjacência para representar o grafo
     map<string, vector<string>> adjacencia;
     for (const auto &aresta : arestas)
@@ -406,13 +396,13 @@ bool ehBipartido(const vector<Aresta> &arestas, const vector<string> &vertices)
                     }
                     else if (cor[v] == cor[u])
                     { // Se o vizinho tem a mesma cor que u
-                        return false; // O grafo não é bipartido
+                        return 0; // O grafo não é bipartido
                     }
                 }
             }
         }
     }
-    return true; // Todos os vértices foram coloridos corretamente, o grafo é bipartido
+    return 1; // Todos os vértices foram coloridos corretamente, o grafo é bipartido
 }
 
 // 3. Verificar se um grafo qualquer é Euleriano.
@@ -1391,10 +1381,7 @@ void navegacaoMenu(int value, const vector<Aresta> &arestas, const vector<string
         }
         break;}
     case 1: {// Verificação -- Bipartido
-        if(direcionado){
-            cout << -1 << endl;
-        }
-        else if (ehBipartido(arestas, vertices))
+        if ((ehBipartido(arestas, vertices, direcionado))==true)
         {
             cout << 1 << endl;
         }
@@ -1529,9 +1516,12 @@ void executarMenu(){
     leituraGrafo();
     cout << endl << endl;
 
+    int i = 0;
+
     // Executar as opções válidas
-    for (int val : values) {
-        navegacaoMenu(val, arestas, vertices, direcionado);
+    while (i < values.size()) {
+        navegacaoMenu(values[i], arestas, vertices, direcionado);
+        i++;
     }
     
     
