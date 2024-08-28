@@ -545,7 +545,7 @@ void imprimirArticulacoes(const vector<Aresta> &arestas, const vector<string> &v
     {
         cout << articulacao << " ";
     }
-    cout << endl;
+    //cout << endl;
 }
 
 int contarArestasPonte(const vector<Aresta> &arestas, const vector<string> &vertices)
@@ -915,7 +915,7 @@ void imprimirOrdenacaoTopologica(const vector<string> &vertices, const vector<Ar
             cout << topoStack.top() << " ";
             topoStack.pop();
         }
-        cout << endl;
+        //cout << endl;
     }
     else
     {
@@ -1086,7 +1086,7 @@ int fluxoMaximo(const vector<Aresta> &arestas, const vector<string> &vertices) {
 void entradaDados()
 {
     string input;
-    cout << retornoInsiraValor();
+    //cout << retornoInsiraValor();
     getline(cin, input);
 
     // Utiliza uma stringstream para separar a entrada em números
@@ -1096,23 +1096,23 @@ void entradaDados()
     int numVertices, numArestas;
     string tipoGrafo;
     
-    cout << endl << endl << "[ Qtd. Vertices e Arestas ]" << endl << endl;
+    /*cout << endl << endl << "[ Qtd. Vertices e Arestas ]" << endl << endl;
     cout << "* Insira a qtd. de Vertices e Arestas" << endl << endl;
-    cout << retornoInsiraValor();
+    cout << retornoInsiraValor();*/
     cin >> numVertices >> numArestas;
 
     // Ignora qualquer nova linha remanescente
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    cout << endl << endl << "[ Digite o Tipo do Grafo ]" << endl << endl;
+    /*cout << endl << endl << "[ Digite o Tipo do Grafo ]" << endl << endl;
     cout << "--------------------------------------------" << endl;
     cout << "Valor               |   Tipo" << endl;
     cout << "--------------------------------------------" << endl;
     cout << "direcionado         |   Direcionado" << endl;
     cout << "nao_direcionado     |   Nao direcionado" << endl << endl;
-    cout << retornoInsiraValor();
+    cout << retornoInsiraValor();*/
     getline(cin, tipoGrafo);
-    cout << endl << endl;
+    // cout << endl << endl;
 
     bool direcionado = (tipoGrafo == "direcionado");
 
@@ -1121,11 +1121,11 @@ void entradaDados()
     vector<string> vertices;
 
     // Entrada das arestas
-    cout << "[ Entrada das Arestas ]" << endl << endl;
-    cout << "* Insira as arestas no formato: [ID] [Origem] [Destino] [Peso]" << endl << endl;
+    /*cout << "[ Entrada das Arestas ]" << endl << endl;
+    cout << "* Insira as arestas no formato: [ID] [Origem] [Destino] [Peso]" << endl << endl;*/
     for (int i = 0; i < numArestas; ++i)
     {
-        cout << i << "/" << (numArestas-1) << ": ";
+        // cout << i << "/" << (numArestas-1) << ": ";
         int id, origem, destino, peso;
         cin >> id >> origem >> destino >> peso;
         arestas[i].id = to_string(id); // Armazena o ID como string
@@ -1135,7 +1135,6 @@ void entradaDados()
         verticesSet.insert(arestas[i].origem);
         verticesSet.insert(arestas[i].destino);
     }
-    cout << endl;
 
     // Converte o conjunto de vértices em vetor
     vertices.assign(verticesSet.begin(), verticesSet.end());
@@ -1209,11 +1208,11 @@ void entradaDados()
                 break;
             case 8:
                 imprimirArvoreEmProfundidade(arestas, vertices[0], direcionado);
-                cout << endl;
+                // cout << endl;
                 break;
             case 9:
                 imprimirArvoreEmLargura(arestas, vertices[0], direcionado);
-                cout << endl;
+                // cout << endl;
                 break;
             case 10:
                 if(direcionado){
@@ -1296,8 +1295,8 @@ void menu()
 }
 int main()
 {
-    boasVindas();
-    menu();
+    //boasVindas();
+    //menu();
     entradaDados();
     
     return 0;
